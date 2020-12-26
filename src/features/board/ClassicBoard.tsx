@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
+
+import { useSelector, useDispatch } from "react-redux";
+
 import styled from "styled-components";
+import { selectTiles, setTile } from "../tiles/tileSlice";
+
 import {
   Tile,
   Bag,
@@ -15,129 +20,101 @@ import {
 } from "../tiles/";
 
 type Props = {
-  children?: React.ReactNode | React.PropsWithChildren<Props>,
+  children?: React.ReactNode,
   context?: any
 }
 
-// const initComponents = [
-//   <Gate />, <KeyTile />, <PassageFourWay />, <PassageStraight />,
-//   <PassageT />, <Pit />, <StartTile />, <WaxEater />
-// ];
+// const initState: any = [
+//   Gate,
+//   KeyTile,
+//   PassageFourWay,
+//   PassageStraight,
+//   PassageT,
+//   StartTile,
+// ]
 
-// const initState: Array<React.FC<any>> = [
-//   (<Gate />),
-//   (<KeyTile />),
-//   (<PassageFourWay />),
-//   (<PassageStraight />),
-//   // (<PassageT />),
-//   // (<Pit />),
-//   (<StartTile />),
-//   // (<WaxEater />)
-// ];
+// const options = []
 
-const initState: any = [
-  Gate,
-  KeyTile,
-  PassageFourWay,
-  PassageStraight,
-  PassageT,
-  StartTile,
-]
+const ClassicBoard: React.FC<Props> = (props) => {
+  const tiles = useSelector(selectTiles);
+  const dispatch = useDispatch();
 
-const ClassicBoard: any = (props: any) => {
-  const [squares, setSquares] = useState<any>([]);
+  // const randomGen = (evt: React.MouseEvent) => {
+  //   evt.preventDefault();
 
-  useEffect((): void => {
-    for (let i = 0; i < 36 - initState.length; i++) {
-      setSquares((p: any[]) => p.concat(null));
-    }
-    for (let i = 0; i < initState.length; i++) {
-      setSquares((p: any[]) => p.concat(initState[i]));
-    }
-    // setSquares([...squares, squares.concat(initState)]);
-    // console.log(squares);
-  }, []);
+  //   const num = Math.floor(Math.random() * 36);
+  //   const
+
+  // }
+
 
   return (
     <Page>
-      {/* <div>
-				<button onClick={() => addTile(0, (<StraightPassage />))}>Straight</button>
-				<button onClick={() => addTile(1, (<TPassage />))}>T-Passage</button>
-				<button onClick={() => addTile(2, (<FourPassage />))}>4-Way</button>
-				<button onClick={() => addTile(3, (<Starting />))}>Start</button>
-				<button onClick={() => addTile(4, (<Gate />))}>Gate</button>
-				<button onClick={() => addTile(5, (<WaxEater />))}>WaxEater</button>
-				<button onClick={() => addTile(6, (<Key />))}>Key</button>
-			</div> */}
+      <div>
+        <button onClick={() => dispatch(setTile({ key: 0, tileName: "key" }))}>Key</button>
+        <button onClick={() => dispatch(setTile({ key: 35, tileName: "wax" }))}>WaxEater</button>
+      </div>
       <SixBySixCage>
-        {/* {
-          history.last()?.toArray().map(([k, v]) => {
-            return (<Tile>{v}</Tile>)
+        {
+          Object.entries(tiles.tileMap).map(([k, v]) => {
+            return <Tile key={k} containing={v} />
           })
-        } */}
-        {/* {
-          squares.map((sq: React.ReactNode) => (<Tile key={Math.random()}>{sq}</Tile>))
-        } */}
-        {/* ROW 1 */}
-        <Tile>
-          <Gate />
-        </Tile>
-        <Tile>
-          <KeyTile />
-        </Tile>
-        <Tile>
-          <WaxEater />
-        </Tile>
-        <Tile>
-          <StartTile />
-        </Tile>
-        <Tile>
-          <PassageFourWay />
-        </Tile>
-        <Tile>
-          <PassageStraight />
-        </Tile>
-        {/* ROW 2 */}
-        <Tile>
-          <PassageT />
-        </Tile>
-        <Tile></Tile>
-        <Tile></Tile>
-        <Tile></Tile>
-        <Tile></Tile>
-        <Tile></Tile>
-        {/* ROW 3 */}
-        <Tile></Tile>
-        <Tile></Tile>
-        <Tile></Tile>
-        <Tile></Tile>
-        <Tile></Tile>
-        <Tile></Tile>
-        {/* ROW 4 */}
-        <Tile></Tile>
-        <Tile></Tile>
-        <Tile></Tile>
-        <Tile></Tile>
-        <Tile></Tile>
-        <Tile></Tile>
-        {/* ROW 5 */}
-        <Tile></Tile>
-        <Tile></Tile>
-        <Tile></Tile>
-        <Tile></Tile>
-        <Tile></Tile>
-        <Tile></Tile>
-        {/* ROW 6 */}
-        <Tile></Tile>
-        <Tile></Tile>
-        <Tile></Tile>
-        <Tile></Tile>
-        <Tile></Tile>
-        <Tile></Tile>
+        }
+
       </SixBySixCage>
     </Page>
+
   )
 }
+
+// const DryBoard: React.FC<Props> = (props) => {
+//   return (
+//     <SixBySixCage>
+//       {/* ROW 1 */}
+//       <Tile containing="gate" />
+//       <Tile containing="pit" />
+//       <Tile />
+//       <Tile />
+//       <Tile />
+//       <Tile />
+//       {/* ROW 2 */}
+//       <Tile />
+//       <Tile></Tile>
+//       <Tile></Tile>
+//       <Tile></Tile>
+//       <Tile></Tile>
+//       <Tile></Tile>
+//       {/* ROW 3 */}
+//       <Tile></Tile>
+//       <Tile></Tile>
+//       <Tile></Tile>
+//       <Tile></Tile>
+//       <Tile></Tile>
+//       <Tile></Tile>
+//       {/* ROW 4 */}
+//       <Tile></Tile>
+//       <Tile></Tile>
+//       <Tile></Tile>
+//       <Tile></Tile>
+//       <Tile></Tile>
+//       <Tile></Tile>
+//       {/* ROW 5 */}
+//       <Tile></Tile>
+//       <Tile></Tile>
+//       <Tile></Tile>
+//       <Tile></Tile>
+//       <Tile></Tile>
+//       <Tile></Tile>
+//       {/* ROW 6 */}
+//       <Tile></Tile>
+//       <Tile></Tile>
+//       <Tile></Tile>
+//       <Tile></Tile>
+//       <Tile></Tile>
+//       <Tile></Tile>
+//     </SixBySixCage>
+//   )
+// }
 
 
 const Page = styled.div`
@@ -158,14 +135,14 @@ const SixBySixCage = styled.div`
   grid-template-columns: repeat(6, minmax(16%, 1fr));
   grid-auto-rows: 1fr;
 	&::before {
-		content: '';
+          content: '';
   width: 0;
   padding-bottom: 100%;
   grid-row: 1 / 1;
   grid-column: 1 / 1;
 	}
 	& > *:first-child {
-		grid-row: 1 / 1;
+    grid-row: 1 / 1;
 		grid-column: 1 / 1;
 	}
 	justify-items: center;

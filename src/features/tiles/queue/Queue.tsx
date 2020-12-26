@@ -1,13 +1,18 @@
 import React from "react";
 import styled from "styled-components";
-import Bag from "../Bag";
-import Tile from "../Tile";
+import { useSelector, useDispatch } from "react-redux";
+import { Bag, Tile } from "../";
+import { selectTiles } from "../tileSlice";
 
 type Props = {
   children?: React.ReactNode
 }
 
 const Queue: React.FC<Props> = (props) => {
+  const tiles = useSelector(selectTiles);
+
+  
+
   return (
     <SplitPane>
       <div className="left">
