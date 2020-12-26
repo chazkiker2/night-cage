@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import { Bag, Tile } from "../";
-import { selectTiles } from "../tileSlice";
+import { selectTiles, drawTile } from "../tileSlice";
 
 type Props = {
   children?: React.ReactNode
@@ -10,31 +10,34 @@ type Props = {
 
 const Queue: React.FC<Props> = (props) => {
   const tiles = useSelector(selectTiles);
+  const dispatch = useDispatch();
 
-  
+  const pullTile = () => {
+    dispatch(drawTile());
+  }
+
+
 
   return (
     <SplitPane>
       <div className="left">
         <QContainer>
           <StQueue>
-            <Tile>
-
-            </Tile>
-            <Tile>
-
-            </Tile>
-            <Tile>
-
-            </Tile>
-            <Tile>
-
-            </Tile>
+            {
+              tiles.queue.map(x => {
+                return <Tile key={x} containing={x} />
+              })
+            }
+            {/* <Tile />
+            <Tile />
+            <Tile />
+            <Tile /> */}
           </StQueue>
         </QContainer>
       </div>
 
       <div className="right">
+        <button onClick={pullTile}>Test</button>
         <Bag />
       </div>
 

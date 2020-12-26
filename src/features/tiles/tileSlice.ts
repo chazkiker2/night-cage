@@ -1,17 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppThunk, RootState } from "../../app/store";
-import { StartTile, Tile } from "./";
-import PassageT from "./PassageT";
-import WaxEater from "./WaxEater";
-interface RemainingTiles {
-  startTile: number;
-  keyTile: number;
-  waxEater: number;
-  gate: number;
-  passageT: number;
-  passageStraight: number;
-  passageFourWay: number;
-}
+// import { StartTile, Tile, PassageT, WaxEater } from "./";
+// import PassageT from "./PassageT";
+// import WaxEater from "./WaxEater";
+
 
 interface TileMap {
   [key: number]: string;
@@ -53,13 +45,6 @@ interface TileMap {
   35: string;
 }
 
-interface TileState {
-  remainingTiles: RemainingTiles;
-  // tileMap: Map<number, string>;
-  tileMap: TileMap;
-  queue: Array<string>;
-}
-
 const initialTileMap: TileMap = {
   0: "empty",
   1: "empty",
@@ -99,6 +84,171 @@ const initialTileMap: TileMap = {
   35: "empty",
 }
 
+
+interface RemainingTiles {
+  startTile: number;
+  keyTile: number;
+  waxEater: number;
+  gate: number;
+  passageT: number;
+  passageStraight: number;
+  passageFourWay: number;
+}
+
+// directions: "up" | "right" | "left" | "down";
+// interface TileData {
+//   [key: string]: any;
+//   name: string;
+//   directions: string;
+//   willBePit: boolean;
+//   location?: number;
+//   hostMultiple?: boolean;
+// }
+
+class TileData {
+  name: string;
+  directions: string;
+  turnsToPit: boolean;
+  willBePit: boolean;
+  active: boolean;
+  location: number | undefined;
+  // hostMultiple: boolean | undefined;
+
+  constructor(
+    name: string,
+    directions: string,
+    turnsToPit: boolean,
+    willBePit: boolean,
+    active: boolean,
+    location: number | undefined
+  ) {
+    this.name = name;
+    this.directions = directions;
+    this.turnsToPit = turnsToPit;
+    this.willBePit = willBePit;
+    this.active = active;
+    this.location = location ?? undefined;
+  }
+}
+class StartTileData extends TileData {
+  constructor() {
+    super(
+      "start",
+      "down right",
+      true,
+      true,
+      true,
+      undefined
+    )
+  }
+}
+class KeyTileData extends TileData {
+  constructor() {
+    super(
+      "key",
+      "down right left up",
+      true,
+      false,
+      false,
+      undefined
+    )
+  }
+}
+
+class WaxEaterData extends TileData {
+  constructor() {
+    super(
+      "wax",
+      "up down left right",
+      false,
+      false,
+      false,
+      undefined
+    );
+  }
+}
+
+class GateData extends TileData {
+  hostMultiplePlayers = true;
+  constructor() {
+    super(
+      "gate",
+      "up down left right",
+      false,
+      false,
+      false,
+      undefined
+    )
+  }
+}
+class StraightPassageData extends TileData {
+  constructor() {
+    super(
+      "straight",
+      "up down",
+      true,
+      false,
+      false,
+      undefined
+    )
+  }
+}
+class PassageTData extends TileData {
+  constructor() {
+    super(
+      "t",
+      "up down left",
+      false,
+      false,
+      false,
+      undefined
+    )
+  }
+}
+
+class PassageFourWay extends TileData {
+  constructor() {
+    super(
+      "four",
+      "up down left right",
+      false,
+      false,
+      false,
+      undefined
+    )
+  }
+}
+
+const bag = new Array<TileData>();
+
+for (let i = 0; i < 6; i++) {
+  bag.push(new KeyTileData());
+}
+for (let i = 0; i < 12; i++) {
+  bag.push(new WaxEaterData());
+}
+for (let i = 0; i < 4; i++) {
+  bag.push(new GateData());
+}
+for (let i = 0; i < 10; i++) {
+  bag.push(new StraightPassageData());
+}
+for (let i = 0; i < 32; i++) {
+  bag.push(new PassageTData());
+}
+for (let i = 0; i < 12; i++) {
+  bag.push(new PassageFourWay());
+}
+
+interface TileState {
+  remainingTiles: RemainingTiles;
+  tileBag: Array<TileData>;
+  // tileMap: Map<number, string>;
+  tileMap: TileMap;
+  queue: Array<string>;
+}
+
+
 const initialState: TileState = {
   remainingTiles: {
     startTile: 0,
@@ -109,24 +259,20 @@ const initialState: TileState = {
     passageT: 32,
     passageFourWay: 12
   },
+  tileBag: bag,
   tileMap: initialTileMap,
   queue: Array<string>("start", "start", "start", "start"),
+
 }
 
 export const tileSlice = createSlice({
   name: "tiles",
   initialState,
   reducers: {
-    drawTiles: (state, action: PayloadAction<number>) => {
-      for (let i = 0; i < action.payload; i++) {
-        if (state.remainingTiles.waxEater > 0) {
-          state.remainingTiles.waxEater--;
-          state.queue.push("WaxEater");
-        } else {
-          state.remainingTiles.passageT--;
-          state.queue.push("PassageT");
-        }
-      }
+    drawTile: (state) => {
+      const i = Math.floor(Math.random() * state.tileBag.length);
+      const tileToMove = state.tileBag.splice(i, 1);
+      state.queue.push(tileToMove[0]?.name);
     },
     setTile: (state, action: PayloadAction<{ key: number, tileName: string }>) => {
       state.tileMap[action.payload.key] = action.payload.tileName;
@@ -134,6 +280,6 @@ export const tileSlice = createSlice({
   }
 })
 
-export const { drawTiles, setTile } = tileSlice.actions;
+export const { drawTile, setTile } = tileSlice.actions;
 export const selectTiles = (state: RootState) => state.tiles;
 export default tileSlice.reducer;
