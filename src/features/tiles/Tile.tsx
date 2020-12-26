@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-interface Props {
-  children?: any;
+type Props = {
+  children?: React.ReactNode
 }
 
-type TileContainerProps = {
+type SProps = {
   rotation: number;
 }
 
-const Tile: React.FC<Props> = (props: Props) => {
+const Tile: React.FC<Props> = ({ children }) => {
   const [rotation, setRotation] = useState(0);
   const rotate = () => {
     setRotation(rotation + 90 >= 360 ? rotation - 270 : rotation + 90);
@@ -17,10 +17,10 @@ const Tile: React.FC<Props> = (props: Props) => {
   return (
     <TileSlot>
       {
-        props.children
+        children
           ? (
             <TileContainer onClick={rotate} rotation={rotation}>
-              {props.children}
+              {children}
             </TileContainer>
           )
           : null
@@ -40,7 +40,7 @@ const TileSlot = styled.div`
 	width: 100%;
 `;
 
-const TileContainer = styled.div<TileContainerProps>`
+const TileContainer = styled.div<SProps>`
 	height: 100%;
 	width: 100%;
 	display: flex;

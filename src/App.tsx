@@ -9,7 +9,8 @@ import { darkTheme, rootVars } from "./theme/themes";
 // import { Counter } from './features/counter/Counter';
 // import './App.css';
 
-function App() {
+
+const App = () => {
   return (
     <ThemeProvider theme={darkTheme}>
       <Router>

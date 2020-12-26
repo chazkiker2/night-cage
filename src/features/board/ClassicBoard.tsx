@@ -1,27 +1,61 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import Tile from "../tiles/Tile";
-// import produce, { Draft } from "immer";
+import {
+  Tile,
+  Bag,
+  Gate,
+  KeyTile,
+  PassageFourWay,
+  PassageStraight,
+  PassageT,
+  Pit,
+  StartTile,
+  tileSlice,
+  WaxEater
+} from "../tiles/";
 
-interface Props { }
+type Props = {
+  children?: React.ReactNode | React.PropsWithChildren<Props>,
+  context?: any
+}
 
-// interface State {
-//   readonly x: Array<any>;
-// }
+// const initComponents = [
+//   <Gate />, <KeyTile />, <PassageFourWay />, <PassageStraight />,
+//   <PassageT />, <Pit />, <StartTile />, <WaxEater />
+// ];
 
-// const state: State = {
-//   x: [],
-// }
+// const initState: Array<React.FC<any>> = [
+//   (<Gate />),
+//   (<KeyTile />),
+//   (<PassageFourWay />),
+//   (<PassageStraight />),
+//   // (<PassageT />),
+//   // (<Pit />),
+//   (<StartTile />),
+//   // (<WaxEater />)
+// ];
 
+const initState: any = [
+  Gate,
+  KeyTile,
+  PassageFourWay,
+  PassageStraight,
+  PassageT,
+  StartTile,
+]
 
+const ClassicBoard: any = (props: any) => {
+  const [squares, setSquares] = useState<any>([]);
 
-const ClassicBoard: React.FC<Props> = (props: Props) => {
-  const [squares, setSquares] = useState<Array<any>>([]);
-
-  useEffect(() => {
-    for (let i = 0; i < 36; i++) {
-      setSquares(prevState => prevState.concat(null));
+  useEffect((): void => {
+    for (let i = 0; i < 36 - initState.length; i++) {
+      setSquares((p: any[]) => p.concat(null));
     }
+    for (let i = 0; i < initState.length; i++) {
+      setSquares((p: any[]) => p.concat(initState[i]));
+    }
+    // setSquares([...squares, squares.concat(initState)]);
+    // console.log(squares);
   }, []);
 
   return (
@@ -41,9 +75,65 @@ const ClassicBoard: React.FC<Props> = (props: Props) => {
             return (<Tile>{v}</Tile>)
           })
         } */}
-        {
-          squares.map(sq => (<Tile key={Math.random()}>{sq}</Tile>))
-        }
+        {/* {
+          squares.map((sq: React.ReactNode) => (<Tile key={Math.random()}>{sq}</Tile>))
+        } */}
+        {/* ROW 1 */}
+        <Tile>
+          <Gate />
+        </Tile>
+        <Tile>
+          <KeyTile />
+        </Tile>
+        <Tile>
+          <WaxEater />
+        </Tile>
+        <Tile>
+          <StartTile />
+        </Tile>
+        <Tile>
+          <PassageFourWay />
+        </Tile>
+        <Tile>
+          <PassageStraight />
+        </Tile>
+        {/* ROW 2 */}
+        <Tile>
+          <PassageT />
+        </Tile>
+        <Tile></Tile>
+        <Tile></Tile>
+        <Tile></Tile>
+        <Tile></Tile>
+        <Tile></Tile>
+        {/* ROW 3 */}
+        <Tile></Tile>
+        <Tile></Tile>
+        <Tile></Tile>
+        <Tile></Tile>
+        <Tile></Tile>
+        <Tile></Tile>
+        {/* ROW 4 */}
+        <Tile></Tile>
+        <Tile></Tile>
+        <Tile></Tile>
+        <Tile></Tile>
+        <Tile></Tile>
+        <Tile></Tile>
+        {/* ROW 5 */}
+        <Tile></Tile>
+        <Tile></Tile>
+        <Tile></Tile>
+        <Tile></Tile>
+        <Tile></Tile>
+        <Tile></Tile>
+        {/* ROW 6 */}
+        <Tile></Tile>
+        <Tile></Tile>
+        <Tile></Tile>
+        <Tile></Tile>
+        <Tile></Tile>
+        <Tile></Tile>
       </SixBySixCage>
     </Page>
   )
