@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { selectTile, setTileFromQueue } from "./tileSlice";
+import { selectTile, selectTiles, setTileFromQueue } from "./tileSlice";
 import {
   Bag,
   Gate,
@@ -12,7 +12,7 @@ import {
   StartTile,
   WaxEater
 } from "./";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 type Props = {
   children?: React.ReactNode;
@@ -72,21 +72,16 @@ const ContainedTile: React.FC<CProps> = ({ children, containing = "empty" }) => 
 }
 
 const Tile: React.FC<Props> = ({ children, loc, containing = "empty", tile }) => {
-  // const [hover, setHover] = useState(false);
+  const tiles = useSelector(selectTiles);
   const dispatch = useDispatch();
-  const [ttile, setTtile] = useState(tile);
   const [rotation, setRotation] = useState(0);
-  const [selected, setSelected] = useState(false);
 
   const rotate = () => {
     setRotation(rotation + 90 >= 360 ? rotation - 270 : rotation + 90);
   }
 
   const select: React.MouseEventHandler = (evt: React.MouseEvent) => {
-    // evt.preventDefault();
     evt.stopPropagation();
-
-    setSelected(!selected);
     dispatch(selectTile(tile))
   }
 
@@ -106,10 +101,10 @@ const Tile: React.FC<Props> = ({ children, loc, containing = "empty", tile }) =>
           // onMouseEnter={handleHoverIn}
           // onMouseOut={handleHoverOut}
           // hover={hover}
-          selected={selected}
+          selected={tiles.selectedTile?.id === tile.id}
         >
           <span id="select" onClick={select}>X</span>
-          <ContainedTile containing={containing} tile={ttile} />
+          <ContainedTile containing={containing} tile={tile} />
         </TileContainer>
       </TileSlot>
     )

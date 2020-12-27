@@ -1,8 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppThunk, RootState } from "../../app/store";
+import { v4 as uuid } from "uuid";
+
 // import { StartTile, Tile, PassageT, WaxEater } from "./";
 // import PassageT from "./PassageT";
 // import WaxEater from "./WaxEater";
+
 
 
 interface TileMap {
@@ -46,6 +49,8 @@ interface TileMap {
 }
 
 class TileData {
+  static nextId: number = 1;
+  id: number;
   name: string;
   directions: string;
   turnsToPit: boolean;
@@ -62,6 +67,10 @@ class TileData {
     active: boolean,
     location: number | undefined
   ) {
+    // this.id = (Math.floor(Math.random() * 10000) + 10000).toString().substring(1);
+
+    this.id = TileData.nextId;
+    TileData.nextId++;
     this.name = name;
     this.directions = directions;
     this.turnsToPit = turnsToPit;
@@ -124,15 +133,15 @@ const initialTileMap: TileMap = {
 }
 
 
-interface RemainingTiles {
-  startTile: number;
-  keyTile: number;
-  waxEater: number;
-  gate: number;
-  passageT: number;
-  passageStraight: number;
-  passageFourWay: number;
-}
+// interface RemainingTiles {
+//   startTile: number;
+//   keyTile: number;
+//   waxEater: number;
+//   gate: number;
+//   passageT: number;
+//   passageStraight: number;
+//   passageFourWay: number;
+// }
 
 // directions: "up" | "right" | "left" | "down";
 // interface TileData {
@@ -266,7 +275,7 @@ for (let i = 0; i < 4; i++) {
 }
 
 interface TileState {
-  remainingTiles: RemainingTiles;
+  // remainingTiles: RemainingTiles;
   tileBag: Array<TileData>;
   // tileMap: Map<number, string>;
   tileQueue: Array<TileData>;
@@ -277,21 +286,10 @@ interface TileState {
 
 
 const initialState: TileState = {
-  remainingTiles: {
-    startTile: 0,
-    keyTile: 6,
-    waxEater: 12,
-    gate: 4,
-    passageStraight: 10,
-    passageT: 32,
-    passageFourWay: 12
-  },
   tileBag: bag,
   tileMap: initialTileMap,
   tileQueue: initTileQueue,
-  selectedTile: undefined,
-  // queue: Array<string>("start", "start", "start", "start"),
-
+  selectedTile: undefined
 }
 
 export const tileSlice = createSlice({
@@ -308,14 +306,23 @@ export const tileSlice = createSlice({
     },
     setTileFromQueue: (state, action: PayloadAction<number>) => {
       if (state.selectedTile !== undefined) {
-        state.tileMap[action.payload] = state.selectedTile;
-        const i = state.tileQueue.findIndex(x => x.name === state.selectedTile?.name);
-        state.tileQueue.splice(i, 1);
-        state.selectedTile = undefined;
+        const tile = state.selectedTile;
+        const i = state.tileQueue.findIndex(x => x.id === tile.id);
+        if (i >= 0) {
+          state.tileQueue.splice(i, 1);
+          state.selectedTile = undefined;
+          state.tileMap[action.payload] = tile;
+        }
       }
     },
     selectTile: (state, action: PayloadAction<TileData>) => {
-      state.selectedTile = action.payload;
+      if (state.selectedTile === undefined || state.selectedTile.id !== action.payload.id) {
+        state.selectedTile = action.payload;
+        return;
+      }
+      if (state.selectedTile.id === action.payload.id) {
+        state.selectedTile = undefined;
+      }
     }
   }
 })
