@@ -72,6 +72,9 @@ const StyledStart = styled.div`
 	width: 100%; height: 100%;
 	overflow: hidden;
 	text-align: center;
+  position: relative;
+  z-index: 2;
+  /* top: -10px; */
 `;
 
 export default StartTile;
