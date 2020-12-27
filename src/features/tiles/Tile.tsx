@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { selectTile, setTileFromQueue } from "./tileSlice";
 import {
   Bag,
   Gate,
@@ -11,14 +12,26 @@ import {
   StartTile,
   WaxEater
 } from "./";
+import { useDispatch } from "react-redux";
 
 type Props = {
   children?: React.ReactNode;
   containing?: string;
+  tile: any;
+  loc: number;
+}
+
+type CProps = {
+  children?: React.ReactNode;
+  containing: string;
+  loc?: number | string;
+  tile?: any;
 }
 
 type SProps = {
   rotation: number;
+  hover?: boolean;
+  selected?: boolean;
 }
 
 // const selectChild = (containing: string): React.ReactNode => {
@@ -33,7 +46,7 @@ type SProps = {
 //   }
 // }
 
-const ContainedTile: React.FC<Props> = ({ children, containing = "empty" }) => {
+const ContainedTile: React.FC<CProps> = ({ children, containing = "empty" }) => {
   switch (containing) {
     case "empty":
       return (null);
@@ -58,19 +71,45 @@ const ContainedTile: React.FC<Props> = ({ children, containing = "empty" }) => {
   }
 }
 
-const Tile: React.FC<Props> = ({ children, containing = "empty" }) => {
+const Tile: React.FC<Props> = ({ children, loc, containing = "empty", tile }) => {
+  // const [hover, setHover] = useState(false);
+  const dispatch = useDispatch();
+  const [ttile, setTtile] = useState(tile);
   const [rotation, setRotation] = useState(0);
+  const [selected, setSelected] = useState(false);
+
   const rotate = () => {
     setRotation(rotation + 90 >= 360 ? rotation - 270 : rotation + 90);
   }
 
+  const select: React.MouseEventHandler = (evt: React.MouseEvent) => {
+    // evt.preventDefault();
+    evt.stopPropagation();
+
+    setSelected(!selected);
+    dispatch(selectTile(tile))
+  }
+
+  const handleSetTile = () => {
+    dispatch(setTileFromQueue(loc));
+
+  }
+
   if (containing === "empty") {
-    return (<TileSlot />);
+    return (<TileSlot onClick={handleSetTile} />);
   } else {
     return (
       <TileSlot>
-        <TileContainer onClick={rotate} rotation={rotation}>
-          <ContainedTile containing={containing} />
+        <TileContainer
+          onClick={rotate}
+          rotation={rotation}
+          // onMouseEnter={handleHoverIn}
+          // onMouseOut={handleHoverOut}
+          // hover={hover}
+          selected={selected}
+        >
+          <span id="select" onClick={select}>X</span>
+          <ContainedTile containing={containing} tile={ttile} />
         </TileContainer>
       </TileSlot>
     )
@@ -86,6 +125,7 @@ const TileSlot = styled.div`
 	border: 1px solid white;
 	height: 100%; 
 	width: 100%;
+  position: relative;
 `;
 
 const TileContainer = styled.div<SProps>`
@@ -96,10 +136,23 @@ const TileContainer = styled.div<SProps>`
 	justify-content: center;
 	align-items: center;
 	overflow: hidden;
-	border: 1px solid white;
+	border: 1px solid ${({ selected }) => selected ? "blue" : "white"};
 	background: var(--pDarker);
 	transform: ${({ rotation }) => `rotate(${rotation}deg)`};
 	transition: transform 0.2s ease-in-out;
+  position: relative;
+  #select {
+    position: absolute;
+    cursor: pointer;
+    /* display: ${({ hover }) => hover ? "inline-block" : "none"}; */
+    display: inline-block;
+    top: 5px;
+    left: 5px;
+    width: 15px;
+    height: 15px;
+    background-color: yellow;
+    z-index: 9;
+  }
 `;
 
 export default Tile;

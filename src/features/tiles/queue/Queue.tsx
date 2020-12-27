@@ -24,8 +24,8 @@ const Queue: React.FC<Props> = (props) => {
         <QContainer>
           <StQueue>
             {
-              tiles.queue.map(x => {
-                return <Tile key={x} containing={x} />
+              tiles.tileQueue.map((x, i) => {
+                return <Tile key={i} loc={-1} tile={x} containing={x.name} />
               })
             }
             {/* <Tile />

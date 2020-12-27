@@ -50,14 +50,10 @@ const ClassicBoard: React.FC<Props> = (props) => {
 
   return (
     <Page>
-      <div>
-        <button onClick={() => dispatch(setTile({ key: 0, tileName: "key" }))}>Key</button>
-        <button onClick={() => dispatch(setTile({ key: 35, tileName: "wax" }))}>WaxEater</button>
-      </div>
       <SixBySixCage>
         {
           Object.entries(tiles.tileMap).map(([k, v]) => {
-            return <Tile key={k} containing={v} />
+            return <Tile key={k} loc={Number.parseInt(k)} tile={v} containing={v.name} />
           })
         }
 

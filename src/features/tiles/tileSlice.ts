@@ -6,104 +6,44 @@ import { AppThunk, RootState } from "../../app/store";
 
 
 interface TileMap {
-  [key: number]: string;
-  0: string;
-  1: string;
-  2: string;
-  3: string;
-  4: string;
-  5: string;
-  6: string;
-  7: string;
-  8: string;
-  9: string;
-  10: string;
-  11: string;
-  12: string;
-  13: string;
-  14: string;
-  15: string;
-  16: string;
-  17: string;
-  18: string;
-  19: string;
-  20: string;
-  21: string;
-  22: string;
-  23: string;
-  24: string;
-  25: string;
-  26: string;
-  27: string;
-  28: string;
-  29: string;
-  30: string;
-  31: string;
-  32: string;
-  33: string;
-  34: string;
-  35: string;
+  [key: number]: TileData;
+  0: TileData;
+  1: TileData;
+  2: TileData;
+  3: TileData;
+  4: TileData;
+  5: TileData;
+  6: TileData;
+  7: TileData;
+  8: TileData;
+  9: TileData;
+  10: TileData;
+  11: TileData;
+  12: TileData;
+  13: TileData;
+  14: TileData;
+  15: TileData;
+  16: TileData;
+  17: TileData;
+  18: TileData;
+  19: TileData;
+  20: TileData;
+  21: TileData;
+  22: TileData;
+  23: TileData;
+  24: TileData;
+  25: TileData;
+  26: TileData;
+  27: TileData;
+  28: TileData;
+  29: TileData;
+  30: TileData;
+  31: TileData;
+  32: TileData;
+  33: TileData;
+  34: TileData;
+  35: TileData;
 }
-
-const initialTileMap: TileMap = {
-  0: "empty",
-  1: "empty",
-  2: "empty",
-  3: "empty",
-  4: "empty",
-  5: "empty",
-  6: "empty",
-  7: "empty",
-  8: "empty",
-  9: "empty",
-  10: "empty",
-  11: "empty",
-  12: "empty",
-  13: "empty",
-  14: "empty",
-  15: "empty",
-  16: "empty",
-  17: "empty",
-  18: "empty",
-  19: "empty",
-  20: "empty",
-  21: "empty",
-  22: "empty",
-  23: "empty",
-  24: "empty",
-  25: "empty",
-  26: "empty",
-  27: "empty",
-  28: "empty",
-  29: "empty",
-  30: "empty",
-  31: "empty",
-  32: "empty",
-  33: "empty",
-  34: "empty",
-  35: "empty",
-}
-
-
-interface RemainingTiles {
-  startTile: number;
-  keyTile: number;
-  waxEater: number;
-  gate: number;
-  passageT: number;
-  passageStraight: number;
-  passageFourWay: number;
-}
-
-// directions: "up" | "right" | "left" | "down";
-// interface TileData {
-//   [key: string]: any;
-//   name: string;
-//   directions: string;
-//   willBePit: boolean;
-//   location?: number;
-//   hostMultiple?: boolean;
-// }
 
 class TileData {
   name: string;
@@ -130,6 +70,81 @@ class TileData {
     this.location = location ?? undefined;
   }
 }
+
+class EmptyTileData extends TileData {
+  constructor() {
+    super(
+      "empty",
+      "",
+      false,
+      false,
+      false,
+      undefined
+    )
+  }
+}
+
+const initialTileMap: TileMap = {
+  0: new EmptyTileData(),
+  1: new EmptyTileData(),
+  2: new EmptyTileData(),
+  3: new EmptyTileData(),
+  4: new EmptyTileData(),
+  5: new EmptyTileData(),
+  6: new EmptyTileData(),
+  7: new EmptyTileData(),
+  8: new EmptyTileData(),
+  9: new EmptyTileData(),
+  10: new EmptyTileData(),
+  11: new EmptyTileData(),
+  12: new EmptyTileData(),
+  13: new EmptyTileData(),
+  14: new EmptyTileData(),
+  15: new EmptyTileData(),
+  16: new EmptyTileData(),
+  17: new EmptyTileData(),
+  18: new EmptyTileData(),
+  19: new EmptyTileData(),
+  20: new EmptyTileData(),
+  21: new EmptyTileData(),
+  22: new EmptyTileData(),
+  23: new EmptyTileData(),
+  24: new EmptyTileData(),
+  25: new EmptyTileData(),
+  26: new EmptyTileData(),
+  27: new EmptyTileData(),
+  28: new EmptyTileData(),
+  29: new EmptyTileData(),
+  30: new EmptyTileData(),
+  31: new EmptyTileData(),
+  32: new EmptyTileData(),
+  33: new EmptyTileData(),
+  34: new EmptyTileData(),
+  35: new EmptyTileData(),
+}
+
+
+interface RemainingTiles {
+  startTile: number;
+  keyTile: number;
+  waxEater: number;
+  gate: number;
+  passageT: number;
+  passageStraight: number;
+  passageFourWay: number;
+}
+
+// directions: "up" | "right" | "left" | "down";
+// interface TileData {
+//   [key: string]: any;
+//   name: string;
+//   directions: string;
+//   willBePit: boolean;
+//   location?: number;
+//   hostMultiple?: boolean;
+// }
+
+
 class StartTileData extends TileData {
   constructor() {
     super(
@@ -142,6 +157,11 @@ class StartTileData extends TileData {
     )
   }
 }
+
+// for (let i = 0; i < 36; i++) {
+//   initialTileMap[i] = new EmptyTileData();
+// }
+
 class KeyTileData extends TileData {
   constructor() {
     super(
@@ -240,12 +260,19 @@ for (let i = 0; i < 12; i++) {
   bag.push(new PassageFourWay());
 }
 
+const initTileQueue = new Array<TileData>();
+for (let i = 0; i < 4; i++) {
+  initTileQueue.push(new StartTileData());
+}
+
 interface TileState {
   remainingTiles: RemainingTiles;
   tileBag: Array<TileData>;
   // tileMap: Map<number, string>;
+  tileQueue: Array<TileData>;
   tileMap: TileMap;
-  queue: Array<string>;
+  selectedTile: TileData | undefined;
+  // queue: Array<string>;
 }
 
 
@@ -261,7 +288,9 @@ const initialState: TileState = {
   },
   tileBag: bag,
   tileMap: initialTileMap,
-  queue: Array<string>("start", "start", "start", "start"),
+  tileQueue: initTileQueue,
+  selectedTile: undefined,
+  // queue: Array<string>("start", "start", "start", "start"),
 
 }
 
@@ -272,14 +301,25 @@ export const tileSlice = createSlice({
     drawTile: (state) => {
       const i = Math.floor(Math.random() * state.tileBag.length);
       const tileToMove = state.tileBag.splice(i, 1);
-      state.queue.push(tileToMove[0]?.name);
+      state.tileQueue.push(tileToMove[0]);
     },
-    setTile: (state, action: PayloadAction<{ key: number, tileName: string }>) => {
-      state.tileMap[action.payload.key] = action.payload.tileName;
+    setTile: (state, action: PayloadAction<{ location: number, tile: TileData }>) => {
+      state.tileMap[action.payload.location] = action.payload.tile;
+    },
+    setTileFromQueue: (state, action: PayloadAction<number>) => {
+      if (state.selectedTile !== undefined) {
+        state.tileMap[action.payload] = state.selectedTile;
+        const i = state.tileQueue.findIndex(x => x.name === state.selectedTile?.name);
+        state.tileQueue.splice(i, 1);
+        state.selectedTile = undefined;
+      }
+    },
+    selectTile: (state, action: PayloadAction<TileData>) => {
+      state.selectedTile = action.payload;
     }
   }
 })
 
-export const { drawTile, setTile } = tileSlice.actions;
+export const { drawTile, setTile, setTileFromQueue, selectTile } = tileSlice.actions;
 export const selectTiles = (state: RootState) => state.tiles;
 export default tileSlice.reducer;
