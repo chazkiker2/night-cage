@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { selectTile, selectTiles, setTileFromQueue } from "./tileSlice";
 import {
-  Bag,
   Gate,
   KeyTile,
   PassageFourWay,
@@ -33,18 +32,6 @@ type SProps = {
   hover?: boolean;
   selected?: boolean;
 }
-
-// const selectChild = (containing: string): React.ReactNode => {
-//   switch (containing) {
-//     case "gate": return Gate;
-//     case "key": return KeyTile;
-//     case "four": return PassageFourWay;
-//     case "straight": return PassageStraight;
-//     case "t": return PassageT;
-//     case "pit": return Pit;
-//     default: return StartTile;
-//   }
-// }
 
 const ContainedTile: React.FC<CProps> = ({ children, containing = "empty" }) => {
   switch (containing) {
@@ -98,10 +85,7 @@ const Tile: React.FC<Props> = ({ children, loc, containing = "empty", tile }) =>
         <TileContainer
           onClick={rotate}
           rotation={rotation}
-          // onMouseEnter={handleHoverIn}
-          // onMouseOut={handleHoverOut}
-          // hover={hover}
-          selected={tiles.selectedTile?.id === tile.id}
+          selected={tiles.selected?.id === tile.id}
         >
           <span id="select" onClick={select}>X</span>
           <ContainedTile containing={containing} tile={tile} />
@@ -139,14 +123,13 @@ const TileContainer = styled.div<SProps>`
   #select {
     position: absolute;
     cursor: pointer;
-    /* display: ${({ hover }) => hover ? "inline-block" : "none"}; */
     display: inline-block;
     top: 5px;
     left: 5px;
     width: 15px;
     height: 15px;
     background-color: yellow;
-    z-index: 9;
+    z-index: 4;
   }
 `;
 

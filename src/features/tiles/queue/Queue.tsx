@@ -24,31 +24,23 @@ const Queue: React.FC<Props> = (props) => {
         <QContainer>
           <StQueue>
             {
-              tiles.tileQueue.map((x, i) => {
+              tiles.queue.map((x, i) => {
                 return <Tile key={i} loc={-1} tile={x} containing={x.name} />
               })
             }
-            {/* <Tile />
-            <Tile />
-            <Tile />
-            <Tile /> */}
           </StQueue>
         </QContainer>
       </div>
-
       <div className="right">
         <button onClick={pullTile}>Test</button>
         <Bag />
       </div>
-
     </SplitPane>
   );
 }
 
 const SplitPane = styled.div`
   width: 100%;
-  /* width: 96vw; */
-  /* max-width: 900px; */
   height: 300px;
   display: flex;
   flex-flow: row nowrap;
@@ -68,15 +60,12 @@ const QContainer = styled.div`
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  /* margin: 2rem auto; */
   width: 100%;
   height: 100%;
 `;
 
 const StQueue = styled.div`
   width: 100%;
-  /* height: 100%; */
-  /* width: 96vw; */
   max-width: 900px;
   max-height: 160px;
   justify-content: center;
