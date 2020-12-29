@@ -1,4 +1,3 @@
-export { default as Bag } from "./Bag";
 export { default as Gate } from "./Gate";
 export { default as KeyTile } from "./KeyTile";
 export { default as PassageFourWay } from "./PassageFourWay";

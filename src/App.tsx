@@ -15,7 +15,7 @@ const App = () => {
     <ThemeProvider theme={darkTheme}>
       <Router>
         <StyledApp className="App">
-          <Header />
+          {/* <Header /> */}
           <Switch>
             <Route path="/play">
               <PlayHome />

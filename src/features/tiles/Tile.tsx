@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
 import { selectTile, selectTiles, setTileFromQueue } from "./tileSlice";
+
 import {
   Gate,
   KeyTile,
@@ -11,7 +13,8 @@ import {
   StartTile,
   WaxEater
 } from "./";
-import { useDispatch, useSelector } from "react-redux";
+import { Candle } from "../player";
+import { selectPlayers } from "../player/playerSlice";
 
 type Props = {
   children?: React.ReactNode;
@@ -60,6 +63,8 @@ const ContainedTile: React.FC<CProps> = ({ children, containing = "empty" }) => 
 
 const Tile: React.FC<Props> = ({ children, loc, containing = "empty", tile }) => {
   const tiles = useSelector(selectTiles);
+  const players = useSelector(selectPlayers);
+
   const dispatch = useDispatch();
   const [rotation, setRotation] = useState(0);
 
@@ -74,8 +79,9 @@ const Tile: React.FC<Props> = ({ children, loc, containing = "empty", tile }) =>
 
   const handleSetTile = () => {
     dispatch(setTileFromQueue(loc));
-
   }
+
+  // const handleSetPlayer = () => {}
 
   if (containing === "empty") {
     return (<TileSlot onClick={handleSetTile} />);
@@ -88,6 +94,9 @@ const Tile: React.FC<Props> = ({ children, loc, containing = "empty", tile }) =>
           selected={tiles.selected?.id === tile.id}
         >
           <span id="select" onClick={select}>X</span>
+          {/* <Candle color={"yellow"} /> */}
+          {/* <Candle color={undefined} /> */}
+          <Candle color={tile.player?.color} />
           <ContainedTile containing={containing} tile={tile} />
         </TileContainer>
       </TileSlot>

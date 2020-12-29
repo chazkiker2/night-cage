@@ -31,6 +31,7 @@ const Page = styled.div`
 	justify-content: center;
 	align-items: center;
 	overflow: hidden;
+  /* position: absolute; */
 `;
 
 const SixBySixCage = styled.div`
