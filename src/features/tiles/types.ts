@@ -1,10 +1,6 @@
-import { Player } from "../player/types";
-
 export interface TileMap {
   [key: number]: Tile;
 }
-
-export type Direction = "up" | "right" | "down" | "left";
 
 export interface Tile {
   id: number;
@@ -16,3 +12,13 @@ export interface Tile {
   player: string | null;
   location?: number;
 }
+
+export interface TileState {
+  bag: Array<Tile>;
+  queue: Array<Tile>;
+  board: TileMap;
+  selected: Tile | null;
+}
+
+export type Direction = "up" | "right" | "down" | "left";
+

@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState, store } from "../../app/store";
 // import { setPlayerLocation } from "../player/playerSlice";
 import { Player } from "../player/types";
-import { TileMap, Tile, Direction } from "./types";
+import { TileState, TileMap, Tile, Direction } from "./types";
 
 class TileData implements Tile {
   static nextId: number = 1;
@@ -178,14 +178,6 @@ for (let i = 0; i < 36; i++) {
   initialTileMap[i] = new EmptyTileData();
   // initialTileMap[i] = null;
 }
-
-interface TileState {
-  bag: Array<Tile>;
-  queue: Array<Tile>;
-  board: TileMap;
-  selected: Tile | null;
-}
-
 
 const initialState: TileState = {
   bag: bag,
