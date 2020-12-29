@@ -2,37 +2,35 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState, store } from "../../app/store";
 // import { setPlayerLocation } from "../player/playerSlice";
 import { Player } from "../player/types";
-interface TileMap {
-  [key: number]: TileData;
-}
+import { TileMap, Tile, Direction } from "./types";
 
-class TileData {
+class TileData implements Tile {
   static nextId: number = 1;
   id: number;
   name: string;
-  directions: string;
+  directions: Direction[];
   turnsToPit: boolean;
   willBePit: boolean;
   active: boolean;
   location: number | undefined;
-  player: Player | null;
+  player: string | null;
   // hostMultiple: boolean | undefined;
 
   constructor(
     name: string,
-    directions?: string,
+    directions?: Direction[],
     turnsToPit?: boolean,
     willBePit?: boolean,
     active?: boolean,
     location?: number,
-    player?: Player
+    player?: string
   ) {
     // this.id = (Math.floor(Math.random() * 10000) + 10000).toString().substring(1);
 
     this.id = TileData.nextId;
     TileData.nextId++;
     this.name = name;
-    this.directions = directions ?? "";
+    this.directions = directions ?? [];
     this.turnsToPit = turnsToPit ?? false;
     this.willBePit = willBePit ?? false;
     this.active = active ?? false;
@@ -40,12 +38,12 @@ class TileData {
     this.player = player ?? null;
   }
 
-  setPlayer(p: Player) {
-    this.player = p;
-  }
-  getPlayer(p: Player) {
-    return this.player;
-  }
+  // setPlayer(p: Player) {
+  //   this.player = p;
+  // }
+  // getPlayer(p: Player) {
+  //   return this.player;
+  // }
 }
 
 class EmptyTileData extends TileData {
@@ -62,11 +60,10 @@ class StartTileData extends TileData {
   constructor() {
     super(
       "start",
-      "down right",
+      ["up", "right"],
       true,
       true,
-      true,
-      undefined
+      true
     )
   }
 }
@@ -75,11 +72,10 @@ class KeyTileData extends TileData {
   constructor() {
     super(
       "key",
-      "down right left up",
+      ["down", "right", "left", "up"],
       true,
       false,
       false,
-      undefined
     )
   }
 }
@@ -88,11 +84,10 @@ class WaxEaterData extends TileData {
   constructor() {
     super(
       "wax",
-      "up down left right",
+      ["up", "down", "left", "right"],
       false,
       false,
-      false,
-      undefined
+      false
     );
   }
 }
@@ -102,11 +97,10 @@ class GateData extends TileData {
   constructor() {
     super(
       "gate",
-      "up down left right",
+      ["up", "down", "left", "right"],
       false,
       false,
       false,
-      undefined
     )
   }
 }
@@ -114,11 +108,10 @@ class StraightPassageData extends TileData {
   constructor() {
     super(
       "straight",
-      "up down",
+      ["up", "down"],
       true,
       false,
       false,
-      undefined
     )
   }
 }
@@ -126,11 +119,10 @@ class PassageTData extends TileData {
   constructor() {
     super(
       "t",
-      "up down left",
+      ["up", "down", "left"],
       false,
       false,
       false,
-      undefined
     )
   }
 }
@@ -139,11 +131,10 @@ class PassageFourWay extends TileData {
   constructor() {
     super(
       "four",
-      "up down left right",
+      ["up", "down", "left", "right"],
       false,
       false,
       false,
-      undefined
     )
   }
 }
@@ -185,13 +176,14 @@ const initialTileMap: TileMap = {}
 
 for (let i = 0; i < 36; i++) {
   initialTileMap[i] = new EmptyTileData();
+  // initialTileMap[i] = null;
 }
 
 interface TileState {
-  bag: Array<TileData>;
-  queue: Array<TileData>;
+  bag: Array<Tile>;
+  queue: Array<Tile>;
   board: TileMap;
-  selected: TileData | null;
+  selected: Tile | null;
 }
 
 
@@ -235,9 +227,13 @@ export const tileSlice = createSlice({
         return;
       }
     },
-    setPlayer: (state, action: PayloadAction<{ location: number, player: Player }>) => {
-      const { location, player } = action.payload;
-      state.board[location].player = player;
+    setPlayer: (state, action: PayloadAction<{ location: number, playerColor: string }>) => {
+      const { location, playerColor } = action.payload;
+      // setPlayerLocation({ location: location, options: state.board[location].directions });
+      // const copyPlayer = { ...player, location: location }
+      // player.location = location;
+      // copyPlayer.options = state.board[location].directions;
+      state.board[location].player = playerColor;
     },
   },
   // extraReducers: (builder) => {

@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import { useSelector, useDispatch } from "react-redux";
-import { selectPlayers } from "./playerSlice";
-import { setPlayer } from "../tiles/tileSlice";
+// import { useSelector, useDispatch } from "react-redux";
+// import { selectPlayers } from "./playerSlice";
+// import { setPlayer } from "../tiles/tileSlice";
 
 type Props = {
   children?: React.ReactNode;
@@ -10,18 +10,18 @@ type Props = {
 }
 
 const Candle: React.FC<Props> = ({ color }) => {
-  const player = useSelector(selectPlayers);
-  const dispatch = useDispatch();
+  // const player = useSelector(selectPlayers);
+  // const dispatch = useDispatch();
 
-  const testSlice = () => {
-    dispatch(setPlayer({ player: player.yellow, location: 0 }));
-  }
+  // const testSlice = () => {
+  //   dispatch(setPlayer({ player: player.yellow, location: 0 }));
+  // }
 
   if (!color) {
     return null;
   }
   return (
-    <SCandle color={color} onClick={testSlice}>
+    <SCandle color={color}>
       <span id="flame" />
       <span id="stick" />
       <span id="base" />

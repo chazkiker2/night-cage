@@ -1,11 +1,12 @@
 export type Player = {
   color: "red" | "blue" | "green" | "yellow";
   location: number;
-  options: Array<"up" | "down" | "left" | "right" | undefined>;
+  options: Direction[];
   isLit: boolean;
   nerveCount: number;
 };
 
+export type Direction = "up" | "right" | "down" | "left";
 
 export type State = {
   [key: string]: any;
@@ -13,5 +14,5 @@ export type State = {
   green: Player,
   yellow: Player,
   blue: Player,
-  playing: Player,
+  playing: "red" | "blue" | "green" | "yellow",
 }

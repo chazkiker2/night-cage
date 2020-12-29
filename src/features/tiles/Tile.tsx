@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { ReactElement, useState } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { selectTile, selectTiles, setTileFromQueue } from "./tileSlice";
+import { selectTile, selectTiles, setPlayer, setTileFromQueue } from "./tileSlice";
 
 import {
   Gate,
@@ -81,7 +81,10 @@ const Tile: React.FC<Props> = ({ children, loc, containing = "empty", tile }) =>
     dispatch(setTileFromQueue(loc));
   }
 
-  // const handleSetPlayer = () => {}
+  const handleSetPlayer = (evt: React.MouseEvent) => {
+    evt.stopPropagation();
+    dispatch(setPlayer({ location: loc, playerColor: players.playing }));
+  }
 
   if (containing === "empty") {
     return (<TileSlot onClick={handleSetTile} />);
@@ -93,10 +96,11 @@ const Tile: React.FC<Props> = ({ children, loc, containing = "empty", tile }) =>
           rotation={rotation}
           selected={tiles.selected?.id === tile.id}
         >
-          <span id="select" onClick={select}>X</span>
+          <span id="select" onClick={select} />
+          <span id="setPlayer" onClick={handleSetPlayer} />
           {/* <Candle color={"yellow"} /> */}
           {/* <Candle color={undefined} /> */}
-          <Candle color={tile.player?.color} />
+          <Candle color={tile.player} />
           <ContainedTile containing={containing} tile={tile} />
         </TileContainer>
       </TileSlot>
@@ -138,6 +142,17 @@ const TileContainer = styled.div<SProps>`
     width: 15px;
     height: 15px;
     background-color: yellow;
+    z-index: 4;
+  }
+  #setPlayer {
+    position: absolute;
+    cursor: pointer;
+    display: inline-block;
+    top: 5px;
+    right: 5px;
+    width: 15px;
+    height: 15px;
+    background-color: blue;
     z-index: 4;
   }
 `;

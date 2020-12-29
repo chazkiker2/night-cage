@@ -1,14 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
-import { Player, State } from "./types";
+import { Player, State, Direction } from "./types";
 import { setPlayer } from "../tiles/tileSlice";
-// type Player = {
-//   color: "red" | "blue" | "green" | "yellow";
-//   location: number;
-//   options: Array<"up" | "down" | "left" | "right" | undefined>;
-//   isLit: boolean;
-//   nerveCount: number;
-// };
 
 const PlayerR: Player = {
   color: "red",
@@ -53,18 +46,25 @@ const initialState: State = {
   green: PlayerG,
   blue: PlayerB,
   yellow: PlayerY,
-  playing: PlayerR
+  playing: "red",
 }
 
 export const playerSlice = createSlice({
   name: "players",
   initialState,
-  reducers: {},
+  reducers: {
+    // setPlayerLocation: (state, action: PayloadAction<{ location: number, options: Direction[] }>) => {
+    //   const { location, options } = action.payload;
+    //   const i = (state.playing.color).toString();
+    //   state[i].location = location;
+    //   state[i].options = options;
+    // }
+  },
   extraReducers: (builder) => {
     builder.addCase(setPlayer, (state, action) => {
-      const { location, player } = action.payload;
+      const { location, playerColor } = action.payload;
       console.log({ state, action });
-      state[player.color].location = location;
+      state[playerColor].location = location;
     })
   }
 
