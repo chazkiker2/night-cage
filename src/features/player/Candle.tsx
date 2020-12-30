@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-// import { useSelector, useDispatch } from "react-redux";
-// import { selectPlayers } from "./playerSlice";
+import { useDispatch } from "react-redux";
+import { selectPlayerTile } from "../gameSlice";
 // import { setPlayer } from "../tiles/tileSlice";
 
 type Props = {
@@ -10,18 +10,25 @@ type Props = {
 }
 
 const Candle: React.FC<Props> = ({ color }) => {
-  // const player = useSelector(selectPlayers);
-  // const dispatch = useDispatch();
+  // const game = useSelector(selectGame);
+  const dispatch = useDispatch();
 
   // const testSlice = () => {
   //   dispatch(setPlayer({ player: player.yellow, location: 0 }));
   // }
+  const handleSelectCandle = (evt: React.MouseEvent) => {
+    evt.stopPropagation();
+    if (color !== undefined) {
+      dispatch(selectPlayerTile(color))
+    }
+
+  }
 
   if (!color) {
     return null;
   }
   return (
-    <SCandle color={color}>
+    <SCandle color={color} onClick={handleSelectCandle}>
       <span id="flame" />
       <span id="stick" />
       <span id="base" />

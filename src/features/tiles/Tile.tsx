@@ -1,8 +1,13 @@
-import React, { ReactElement, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { selectTile, selectGame, setPlayer, setTileFromQueue } from "../gameSlice";
-
+import {
+  selectTile,
+  selectGame,
+  setPlayer,
+  setTileFromQueue,
+  rotateTile
+} from "../gameSlice";
 import {
   Gate,
   KeyTile,
@@ -14,19 +19,18 @@ import {
   WaxEater
 } from "./";
 import { Candle } from "../player";
-// import { selectPlayers } from "../player/playerSlice";
 
 type Props = {
   children?: React.ReactNode;
   containing?: string;
   tile: any;
-  loc: number;
+  loc: [number, number];
 }
 
 type CProps = {
   children?: React.ReactNode;
   containing: string;
-  loc?: number | string;
+  loc?: [number, number];
   tile?: any;
 }
 
@@ -34,6 +38,62 @@ type SProps = {
   rotation: number;
   hover?: boolean;
   selected?: boolean;
+}
+
+
+const Tile: React.FC<Props> = ({ children, loc, containing = "empty", tile }) => {
+  const game = useSelector(selectGame);
+  const tiles = game;
+  const players = game.players;
+
+  const dispatch = useDispatch();
+  const [rotation, setRotation] = useState(0);
+
+  const rotate = (evt: React.MouseEvent) => {
+    evt.stopPropagation();
+    setRotation(rotation + 90 >= 360 ? rotation - 270 : rotation + 90);
+    dispatch(rotateTile(loc));
+  }
+
+  const select: React.MouseEventHandler = (evt: React.MouseEvent) => {
+    evt.stopPropagation();
+    dispatch(selectTile(tile))
+  }
+
+  const handleSetTile = () => {
+    dispatch(setTileFromQueue(loc));
+  }
+
+  const handleSetPlayer = (evt: React.MouseEvent) => {
+    evt.stopPropagation();
+    dispatch(setPlayer({ location: loc, playerColor: players.playing }));
+  }
+
+  if (containing === "empty") {
+    return (<TileSlot onClick={handleSetTile} />);
+  } else {
+    return (
+      <TileSlot>
+        <TileContainer
+          onClick={select}
+          rotation={rotation}
+          selected={tiles.selected?.id === tile.id}
+        >
+          <span id="select" onClick={rotate} />
+          <span id="setPlayer" onClick={handleSetPlayer} />
+          {/* <Candle color={"yellow"} /> */}
+          {/* <Candle color={undefined} /> */}
+          {/* {players.red.location === loc && loc >= 0 ? <Candle color={"red"} /> : null}
+          {players.green.location === loc && loc >= 0 ? <Candle color={"green"} /> : null}
+          {players.yellow.location === loc && loc >= 0 ? <Candle color={"yellow"} /> : null}
+          {players.blue.location === loc && loc >= 0 ? <Candle color={"blue"} /> : null} */}
+
+          <Candle color={tile.player} />
+          <ContainedTile containing={containing} tile={tile} />
+        </TileContainer>
+      </TileSlot>
+    )
+  }
 }
 
 const ContainedTile: React.FC<CProps> = ({ children, containing = "empty" }) => {
@@ -61,58 +121,6 @@ const ContainedTile: React.FC<CProps> = ({ children, containing = "empty" }) => 
   }
 }
 
-const Tile: React.FC<Props> = ({ children, loc, containing = "empty", tile }) => {
-  const game = useSelector(selectGame);
-  const tiles = game;
-  const players = game.players;
-
-  const dispatch = useDispatch();
-  const [rotation, setRotation] = useState(0);
-
-  const rotate = () => {
-    setRotation(rotation + 90 >= 360 ? rotation - 270 : rotation + 90);
-  }
-
-  const select: React.MouseEventHandler = (evt: React.MouseEvent) => {
-    evt.stopPropagation();
-    dispatch(selectTile(tile))
-  }
-
-  const handleSetTile = () => {
-    dispatch(setTileFromQueue(loc));
-  }
-
-  const handleSetPlayer = (evt: React.MouseEvent) => {
-    evt.stopPropagation();
-    dispatch(setPlayer({ location: loc, playerColor: players.playing }));
-  }
-
-  if (containing === "empty") {
-    return (<TileSlot onClick={handleSetTile} />);
-  } else {
-    return (
-      <TileSlot>
-        <TileContainer
-          onClick={rotate}
-          rotation={rotation}
-          selected={tiles.selected?.id === tile.id}
-        >
-          <span id="select" onClick={select} />
-          <span id="setPlayer" onClick={handleSetPlayer} />
-          {/* <Candle color={"yellow"} /> */}
-          {/* <Candle color={undefined} /> */}
-          {players.red.location === loc && loc >= 0 ? <Candle color={"red"} /> : null}
-          {players.green.location === loc && loc >= 0 ? <Candle color={"green"} /> : null}
-          {players.yellow.location === loc && loc >= 0 ? <Candle color={"yellow"} /> : null}
-          {players.blue.location === loc && loc >= 0 ? <Candle color={"blue"} /> : null}
-
-          <Candle color={tile.player} />
-          <ContainedTile containing={containing} tile={tile} />
-        </TileContainer>
-      </TileSlot>
-    )
-  }
-}
 
 const TileSlot = styled.div`
 	display: flex;

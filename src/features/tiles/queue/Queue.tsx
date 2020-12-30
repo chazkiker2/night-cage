@@ -22,7 +22,7 @@ const Queue: React.FC<Props> = (props) => {
         <StQueue>
           {
             tiles.queue.map((x, i) => {
-              return <Tile key={i} loc={-1} tile={x} containing={x.name} />
+              return <Tile key={i} loc={[-1, i]} tile={x} containing={x.name} />
             })
           }
         </StQueue>

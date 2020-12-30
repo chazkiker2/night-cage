@@ -1,74 +1,102 @@
-import { TileMap, Tile, Direction } from "./types";
+import { TileMap, Tile, PositionMap, Colors } from "../types";
 
 class TileData implements Tile {
   static nextId: number = 1;
   id: number;
   name: string;
-  directions: Direction[];
+  // directions: Direction[];
   turnsToPit: boolean;
   willBePit: boolean;
   active: boolean;
   location: number | undefined;
-  player: string | null;
+  player: Colors | null;
+  positionMap: PositionMap;
+  currentPosition: 0 | 90 | 180 | 270;
+  location2d: [number, number];
   // hostMultiple: boolean | undefined;
 
   constructor(
     name: string,
-    directions?: Direction[],
+    positionMap: PositionMap,
     turnsToPit?: boolean,
     willBePit?: boolean,
     active?: boolean,
+    location2d?: [number, number],
     location?: number,
-    player?: string
+    player?: Colors | null,
   ) {
-    // this.id = (Math.floor(Math.random() * 10000) + 10000).toString().substring(1);
-
     this.id = TileData.nextId;
     TileData.nextId++;
     this.name = name;
-    this.directions = directions ?? [];
+    this.positionMap = positionMap ?? {
+      0: [],
+      90: [],
+      180: [],
+      270: []
+    };
+    // this.directions = directions ?? [];
     this.turnsToPit = turnsToPit ?? false;
     this.willBePit = willBePit ?? false;
     this.active = active ?? false;
     this.location = location ?? undefined;
     this.player = player ?? null;
+    this.currentPosition = 0;
+    this.location2d = location2d ?? [-1, -1];
   }
-
-  // setPlayer(p: Player) {
-  //   this.player = p;
-  // }
-  // getPlayer(p: Player) {
-  //   return this.player;
-  // }
 }
 
-class EmptyTileData extends TileData {
-  constructor() {
+const empty: PositionMap = {
+  0: [],
+  90: [],
+  180: [],
+  270: []
+}
+
+export class EmptyTileData extends TileData {
+  constructor(i: number, j: number) {
     super(
-      "empty"
+      "empty",
+      empty,
+      false,
+      false,
+      false,
+      [i, j]
     )
   }
 }
 
 
+
+const startTilePosition: PositionMap = {
+  0: ["up", "right"],
+  90: ["right", "down"],
+  180: ["down", "left"],
+  270: ["left", "up"]
+}
 
 class StartTileData extends TileData {
   constructor() {
     super(
       "start",
-      ["up", "right"],
+      startTilePosition,
       true,
       true,
-      true
+      true,
     )
   }
 }
 
+const allDirectionPosition: PositionMap = {
+  0: ["up", "right", "down", "left"],
+  90: ["right", "down", "left", "up"],
+  180: ["down", "left", "up", "right"],
+  270: ["left", "up", "right", "down"]
+}
 class KeyTileData extends TileData {
   constructor() {
     super(
       "key",
-      ["down", "right", "left", "up"],
+      allDirectionPosition,
       true,
       false,
       false,
@@ -80,7 +108,7 @@ class WaxEaterData extends TileData {
   constructor() {
     super(
       "wax",
-      ["up", "down", "left", "right"],
+      allDirectionPosition,
       false,
       false,
       false
@@ -93,29 +121,43 @@ class GateData extends TileData {
   constructor() {
     super(
       "gate",
-      ["up", "down", "left", "right"],
+      allDirectionPosition,
       false,
       false,
       false,
     )
   }
 }
+
+const straightPosition: PositionMap = {
+  0: ["up", "down"],
+  90: ["right", "left"],
+  180: ["down", "up"],
+  270: ["left", "right"]
+}
 class StraightPassageData extends TileData {
   constructor() {
     super(
       "straight",
-      ["up", "down"],
+      straightPosition,
       true,
       false,
       false,
     )
   }
 }
+
+const tPosition: PositionMap = {
+  0: ["up", "right", "down"],
+  90: ["right", "down", "left"],
+  180: ["down", "left", "up"],
+  270: ["left", "up", "right"]
+}
 class PassageTData extends TileData {
   constructor() {
     super(
       "t",
-      ["up", "down", "left"],
+      tPosition,
       false,
       false,
       false,
@@ -127,7 +169,7 @@ class PassageFourWay extends TileData {
   constructor() {
     super(
       "four",
-      ["up", "down", "left", "right"],
+      allDirectionPosition,
       false,
       false,
       false,
@@ -168,10 +210,10 @@ for (let i = 0; i < 32; i++) {
 // initialize tile map
 const initialTileMap: TileMap = {}
 
-for (let i = 0; i < 36; i++) {
-  initialTileMap[i] = new EmptyTileData();
-  // initialTileMap[i] = null;
-}
+// for (let i = 0; i < 36; i++) {
+//   initialTileMap[i] = new EmptyTileData();
+//   // initialTileMap[i] = null;
+// }
 
 export { initialTileMap, initTileQueue, bag, TileData };
 // export { initTileQueue };
