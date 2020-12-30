@@ -1,7 +1,7 @@
 import React, { ReactElement, useState } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { selectTile, selectTiles, setPlayer, setTileFromQueue } from "./gameSlice";
+import { selectTile, selectGame, setPlayer, setTileFromQueue } from "../gameSlice";
 
 import {
   Gate,
@@ -14,7 +14,7 @@ import {
   WaxEater
 } from "./";
 import { Candle } from "../player";
-import { selectPlayers } from "../player/playerSlice";
+// import { selectPlayers } from "../player/playerSlice";
 
 type Props = {
   children?: React.ReactNode;
@@ -62,8 +62,9 @@ const ContainedTile: React.FC<CProps> = ({ children, containing = "empty" }) => 
 }
 
 const Tile: React.FC<Props> = ({ children, loc, containing = "empty", tile }) => {
-  const tiles = useSelector(selectTiles);
-  const players = useSelector(selectPlayers);
+  const game = useSelector(selectGame);
+  const tiles = game;
+  const players = game.players;
 
   const dispatch = useDispatch();
   const [rotation, setRotation] = useState(0);

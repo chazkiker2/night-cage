@@ -1,12 +1,13 @@
 import React from "react";
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
-import { selectPlayers, endTurn } from "./playerSlice";
+import { selectGame, endTurn } from "../gameSlice";
 import { Heading, Anchor } from "../../shared/layout";
 type Props = {}
 
 const TurnTracker: React.FC<Props> = (props) => {
-  const players = useSelector(selectPlayers);
+  const game = useSelector(selectGame);
+  const players = game.players;
   const dispatch = useDispatch();
 
   return (

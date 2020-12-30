@@ -7,4 +7,4 @@ export { default as Pit } from "./Pit";
 export { default as StartTile } from "./StartTile";
 export { default as Tile } from "./Tile";
 export { default as WaxEater } from "./WaxEater";
-export { default as gameSlice } from "./gameSlice";
+// export { default as gameSlice } from "./gameSlice";

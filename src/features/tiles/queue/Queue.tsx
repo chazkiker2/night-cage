@@ -2,14 +2,14 @@ import React from "react";
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import { Tile } from "../";
-import { selectTiles, drawTile } from "../gameSlice";
+import { selectGame, drawTile } from "../../gameSlice";
 
 type Props = {
   children?: React.ReactNode
 }
 
 const Queue: React.FC<Props> = (props) => {
-  const tiles = useSelector(selectTiles);
+  const tiles = useSelector(selectGame);
   const dispatch = useDispatch();
 
   const pullTile = () => {

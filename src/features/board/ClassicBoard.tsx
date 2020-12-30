@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
-import { selectTiles } from "../tiles/gameSlice";
+import { selectGame } from "../gameSlice";
 import { Tile } from "../tiles/";
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
 }
 
 const ClassicBoard: React.FC<Props> = (props) => {
-  const tiles = useSelector(selectTiles);
+  const tiles = useSelector(selectGame);
 
   return (
     <Page>

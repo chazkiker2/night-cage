@@ -1,11 +1,12 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import playerReducer from '../features/player/playerSlice';
-import tileReducer from "../features/tiles/gameSlice";
+// import playerReducer from '../features/player/playerSlice';
+// import tileReducer from "../features/tiles/gameSlice";
+import gameReducer from "../features/gameSlice";
 
 export const store = configureStore({
   reducer: {
-    tiles: tileReducer,
-    players: playerReducer,
+    game: gameReducer,
+    // players: playerReducer,
   },
 });
 
