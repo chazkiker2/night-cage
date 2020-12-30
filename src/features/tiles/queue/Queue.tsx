@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import { Tile } from "../";
-import { selectTiles, drawTile } from "../tileSlice";
+import { selectTiles, drawTile } from "../gameSlice";
 
 type Props = {
   children?: React.ReactNode

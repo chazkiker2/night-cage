@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Queue from "../tiles/queue/Queue";
 import ClassicBoard from "./ClassicBoard";
 // import Header from "../../shared/Header";
-import { CandleQueue } from "../player";
+import { CandleQueue, TurnTracker } from "../player";
 
 const PlayHome = (props: any) => {
   return (
@@ -11,6 +11,7 @@ const PlayHome = (props: any) => {
       <BoardContainer>
         <CandleQueue />
         <Queue />
+        <TurnTracker />
         <ClassicBoard />
       </BoardContainer>
     </>

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { Player, State, Direction } from "./types";
-import { setPlayer } from "../tiles/tileSlice";
+import { setPlayer } from "../tiles/gameSlice";
 
 const PlayerR: Player = {
   color: "red",
@@ -42,10 +42,17 @@ const PlayerY: Player = {
 // };
 
 const initialState: State = {
+  turnOrder: {
+    0: "red",
+    1: "blue",
+    2: "green",
+    3: "yellow"
+  },
   red: PlayerR,
   green: PlayerG,
   blue: PlayerB,
   yellow: PlayerY,
+  playCount: 0,
   playing: "red",
 }
 
@@ -53,12 +60,12 @@ export const playerSlice = createSlice({
   name: "players",
   initialState,
   reducers: {
-    // setPlayerLocation: (state, action: PayloadAction<{ location: number, options: Direction[] }>) => {
-    //   const { location, options } = action.payload;
-    //   const i = (state.playing.color).toString();
-    //   state[i].location = location;
-    //   state[i].options = options;
-    // }
+    endTurn: (state) => {
+      state.playCount + 1 >= 4 ? state.playCount = 0 : state.playCount++;
+      // state.playCount = (state.playCount + 1) % 3 === 0 ? state.playCount + 1 : 0;
+      state.playing = state.turnOrder[state.playCount];
+
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(setPlayer, (state, action) => {
@@ -70,7 +77,7 @@ export const playerSlice = createSlice({
 
 })
 
-// export const { setPlayerLocation } = playerSlice.actions;
+export const { endTurn } = playerSlice.actions;
 
 export const selectPlayers = (state: RootState) => state.players;
 export default playerSlice.reducer;

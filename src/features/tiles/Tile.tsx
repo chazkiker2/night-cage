@@ -1,7 +1,7 @@
 import React, { ReactElement, useState } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { selectTile, selectTiles, setPlayer, setTileFromQueue } from "./tileSlice";
+import { selectTile, selectTiles, setPlayer, setTileFromQueue } from "./gameSlice";
 
 import {
   Gate,
@@ -100,6 +100,11 @@ const Tile: React.FC<Props> = ({ children, loc, containing = "empty", tile }) =>
           <span id="setPlayer" onClick={handleSetPlayer} />
           {/* <Candle color={"yellow"} /> */}
           {/* <Candle color={undefined} /> */}
+          {players.red.location === loc && loc >= 0 ? <Candle color={"red"} /> : null}
+          {players.green.location === loc && loc >= 0 ? <Candle color={"green"} /> : null}
+          {players.yellow.location === loc && loc >= 0 ? <Candle color={"yellow"} /> : null}
+          {players.blue.location === loc && loc >= 0 ? <Candle color={"blue"} /> : null}
+
           <Candle color={tile.player} />
           <ContainedTile containing={containing} tile={tile} />
         </TileContainer>

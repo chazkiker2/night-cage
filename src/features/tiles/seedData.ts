@@ -1,8 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState, store } from "../../app/store";
-// import { setPlayerLocation } from "../player/playerSlice";
-import { Player } from "../player/types";
-import { TileState, TileMap, Tile, Direction } from "./types";
+import { TileMap, Tile, Direction } from "./types";
 
 class TileData implements Tile {
   static nextId: number = 1;
@@ -141,15 +137,13 @@ class PassageFourWay extends TileData {
 
 // initialize tile queue
 const initTileQueue = new Array<TileData>();
-initTileQueue.push(new StartTileData());
 
 
 // initialize tile bag
 const bag = new Array<TileData>();
 
-for (let i = 0; i < 3; i++) {
-  // initTileQueue.push(new EmptyTileData());
-  bag.push(new StartTileData());
+for (let i = 0; i < 4; i++) {
+  initTileQueue.push(new StartTileData());
 }
 
 for (let i = 0; i < 6; i++) {
@@ -179,62 +173,6 @@ for (let i = 0; i < 36; i++) {
   // initialTileMap[i] = null;
 }
 
-const initialState: TileState = {
-  bag: bag,
-  board: initialTileMap,
-  queue: initTileQueue,
-  selected: null
-}
-
-export const tileSlice = createSlice({
-  name: "tiles",
-  initialState,
-  reducers: {
-    drawTile: (state) => {
-      const i = Math.floor(Math.random() * state.bag.length);
-      const tileToMove = state.bag.splice(i, 1);
-      state.queue.push(tileToMove[0]);
-    },
-    setTile: (state, action: PayloadAction<{ location: number, tile: TileData }>) => {
-      state.board[action.payload.location] = action.payload.tile;
-    },
-    setTileFromQueue: (state, action: PayloadAction<number>) => {
-      if (state.selected !== null) {
-        const tile = state.selected;
-        const i = state.queue.findIndex(x => x.id === tile.id);
-        if (i >= 0) {
-          state.queue.splice(i, 1);
-          state.selected = null;
-          state.board[action.payload] = { ...tile, location: action.payload };
-        }
-      }
-    },
-    selectTile: (state, action: PayloadAction<TileData>) => {
-      if (state.selected) {
-        if (state.selected.id === action.payload.id) {
-          state.selected = null;
-        }
-      } else {
-        state.selected = action.payload;
-        return;
-      }
-    },
-    setPlayer: (state, action: PayloadAction<{ location: number, playerColor: string }>) => {
-      const { location, playerColor } = action.payload;
-      // setPlayerLocation({ location: location, options: state.board[location].directions });
-      // const copyPlayer = { ...player, location: location }
-      // player.location = location;
-      // copyPlayer.options = state.board[location].directions;
-      state.board[location].player = playerColor;
-    },
-  },
-  // extraReducers: (builder) => {
-  //   builder.addCase(setPlayerLocation, (state, action) => {
-  //     console.log({ state, action });
-  //   })
-  // }
-})
-
-export const { drawTile, setTile, setTileFromQueue, selectTile, setPlayer } = tileSlice.actions;
-export const selectTiles = (state: RootState) => state.tiles;
-export default tileSlice.reducer;
+export { initialTileMap, initTileQueue, bag, TileData };
+// export { initTileQueue };
+// export { bag };

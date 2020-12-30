@@ -13,7 +13,7 @@ export interface Tile {
   location?: number;
 }
 
-export interface TileState {
+export interface GameState {
   bag: Array<Tile>;
   queue: Array<Tile>;
   board: TileMap;

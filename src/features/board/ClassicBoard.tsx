@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
-import { selectTiles } from "../tiles/tileSlice";
+import { selectTiles } from "../tiles/gameSlice";
 import { Tile } from "../tiles/";
 
 type Props = {
