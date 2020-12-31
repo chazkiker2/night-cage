@@ -1,57 +1,51 @@
 import React from "react";
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
-import { Bag, Tile } from "../";
-import { selectTiles, drawTile } from "../tileSlice";
+import { Tile } from "../";
+import { selectGame, drawTile } from "../../gameSlice";
 
 type Props = {
   children?: React.ReactNode
 }
 
 const Queue: React.FC<Props> = (props) => {
-  const tiles = useSelector(selectTiles);
+  const tiles = useSelector(selectGame);
   const dispatch = useDispatch();
 
   const pullTile = () => {
     dispatch(drawTile());
   }
 
-
-
   return (
-    <SplitPane>
-      <div className="left">
-        <QContainer>
-          <StQueue>
-            {
-              tiles.queue.map((x, i) => {
-                return <Tile key={i} loc={-1} tile={x} containing={x.name} />
-              })
-            }
-          </StQueue>
-        </QContainer>
-      </div>
-      <div className="right">
-        <button onClick={pullTile}>Test</button>
-        <Bag />
-      </div>
-    </SplitPane>
+    <Styled>
+      <QContainer>
+        <StQueue>
+          {
+            tiles.queue.map((x, i) => {
+              return <Tile key={i} loc={[-1, i]} tile={x} containing={x.name} />
+            })
+          }
+        </StQueue>
+      </QContainer>
+      <StBag onClick={pullTile}>
+        <h1>Bag</h1>
+      </StBag>
+    </Styled>
+
+    // </SplitPane>
   );
 }
 
-const SplitPane = styled.div`
-  width: 100%;
-  height: 300px;
+const Styled = styled.div`
+  width: 60%;
   display: flex;
   flex-flow: row nowrap;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: center;
-  .left {
-    width: 70%;
-  }
-  .right {
-    width: 20%;
-  }
+  margin: 1rem;
+  padding: 1rem;
+  border: 10px solid var(--pDarkest);
+  border-radius: 20px;
 `;
 
 const QContainer = styled.div`
@@ -60,8 +54,11 @@ const QContainer = styled.div`
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  width: 100%;
+  width: 500px;
+  /* width: 100%; */
+  max-width: 600px;
   height: 100%;
+  /* background-color: var(--pDarker); */
 `;
 
 const StQueue = styled.div`
@@ -70,7 +67,7 @@ const StQueue = styled.div`
   max-height: 160px;
   justify-content: center;
   display: grid;
-  grid-template-columns: repeat(6, minMax(16%, 1fr));
+  grid-template-columns: repeat(4, minMax(16%, 1fr));
   grid-auto-rows: 1fr;
   &::before {
     content: '';
@@ -86,6 +83,22 @@ const StQueue = styled.div`
 	justify-items: center;
 	align-items: center;
 	gap: 0;
+`;
+
+const StBag = styled.div`
+  height: 100px;
+  width: 100px;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background-color: var(--pDarkest);
+  h1 {
+    font-size: 3rem;
+  }
+  border-radius: 50%;
+  cursor: pointer;
 `;
 
 export default Queue;

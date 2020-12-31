@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
-import { selectTiles } from "../tiles/tileSlice";
+import { selectGame } from "../gameSlice";
 import { Tile } from "../tiles/";
 
 type Props = {
@@ -10,14 +10,21 @@ type Props = {
 }
 
 const ClassicBoard: React.FC<Props> = (props) => {
-  const tiles = useSelector(selectTiles);
+  const tiles = useSelector(selectGame);
 
   return (
     <Page>
       <SixBySixCage>
-        {
+        {/* {
           Object.entries(tiles.board).map(([k, v]) => {
             return <Tile key={k} loc={Number.parseInt(k)} tile={v} containing={v.name} />
+          })
+        } */}
+        {
+          tiles.board?.map(x => {
+            return x.map(y => {
+              return <Tile key={y.id} loc={y.location2d} tile={y} containing={y.name} />
+            });
           })
         }
       </SixBySixCage>
@@ -31,6 +38,7 @@ const Page = styled.div`
 	justify-content: center;
 	align-items: center;
 	overflow: hidden;
+  /* position: absolute; */
 `;
 
 const SixBySixCage = styled.div`

@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { selectTile, selectTiles, setTileFromQueue } from "./tileSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectTile,
+  selectGame,
+  setPlayer,
+  setTileFromQueue,
+  rotateTile
+} from "../gameSlice";
 import {
   Gate,
   KeyTile,
@@ -11,19 +18,19 @@ import {
   StartTile,
   WaxEater
 } from "./";
-import { useDispatch, useSelector } from "react-redux";
+import { Candle } from "../player";
 
 type Props = {
   children?: React.ReactNode;
   containing?: string;
   tile: any;
-  loc: number;
+  loc: [number, number];
 }
 
 type CProps = {
   children?: React.ReactNode;
   containing: string;
-  loc?: number | string;
+  loc?: [number, number];
   tile?: any;
 }
 
@@ -31,6 +38,65 @@ type SProps = {
   rotation: number;
   hover?: boolean;
   selected?: boolean;
+}
+
+
+const Tile: React.FC<Props> = ({ children, loc, containing = "empty", tile }) => {
+  const game = useSelector(selectGame);
+  // const tiles = game;
+  const players = game.players;
+
+  const dispatch = useDispatch();
+  const [rotation, setRotation] = useState(0);
+
+  const rotate = (evt: React.MouseEvent) => {
+    evt.stopPropagation();
+    setRotation(rotation + 90 >= 360 ? rotation - 270 : rotation + 90);
+    dispatch(rotateTile(loc));
+  }
+
+  const select: React.MouseEventHandler = (evt: React.MouseEvent) => {
+    evt.stopPropagation();
+    dispatch(selectTile(tile))
+  }
+
+  const handleSetTile = () => {
+    dispatch(setTileFromQueue(loc));
+  }
+
+  const handleSetPlayer = (evt: React.MouseEvent) => {
+    evt.stopPropagation();
+    // console.log({ location: loc, playerColor: players.playing });
+    console.log(loc);
+    dispatch(setPlayer(loc));
+  }
+
+
+  if (containing === "empty") {
+    return (<TileSlot onClick={handleSetTile} />);
+  } else {
+    return (
+      <TileSlot>
+        <TileContainer
+          onClick={select}
+          rotation={rotation}
+          selected={game.selected?.id === tile.id}
+        >
+          <span id="select" onClick={rotate} />
+          <span id="setPlayer" onClick={handleSetPlayer} />
+          {/* <Candle color={"yellow"} /> */}
+          {/* <Candle color={undefined} /> */}
+          {players.red.location === loc ? <Candle color={"red"} /> : null}
+          {players.green.location === loc ? <Candle color={"green"} /> : null}
+          {players.yellow.location === loc ? <Candle color={"yellow"} /> : null}
+          {players.blue.location === loc ? <Candle color={"blue"} /> : null}
+
+          {/* <Candle color={tile.player} /> */}
+          <ContainedTile containing={containing} tile={tile} />
+        </TileContainer>
+      </TileSlot>
+    )
+  }
 }
 
 const ContainedTile: React.FC<CProps> = ({ children, containing = "empty" }) => {
@@ -58,42 +124,6 @@ const ContainedTile: React.FC<CProps> = ({ children, containing = "empty" }) => 
   }
 }
 
-const Tile: React.FC<Props> = ({ children, loc, containing = "empty", tile }) => {
-  const tiles = useSelector(selectTiles);
-  const dispatch = useDispatch();
-  const [rotation, setRotation] = useState(0);
-
-  const rotate = () => {
-    setRotation(rotation + 90 >= 360 ? rotation - 270 : rotation + 90);
-  }
-
-  const select: React.MouseEventHandler = (evt: React.MouseEvent) => {
-    evt.stopPropagation();
-    dispatch(selectTile(tile))
-  }
-
-  const handleSetTile = () => {
-    dispatch(setTileFromQueue(loc));
-
-  }
-
-  if (containing === "empty") {
-    return (<TileSlot onClick={handleSetTile} />);
-  } else {
-    return (
-      <TileSlot>
-        <TileContainer
-          onClick={rotate}
-          rotation={rotation}
-          selected={tiles.selected?.id === tile.id}
-        >
-          <span id="select" onClick={select}>X</span>
-          <ContainedTile containing={containing} tile={tile} />
-        </TileContainer>
-      </TileSlot>
-    )
-  }
-}
 
 const TileSlot = styled.div`
 	display: flex;
@@ -129,6 +159,17 @@ const TileContainer = styled.div<SProps>`
     width: 15px;
     height: 15px;
     background-color: yellow;
+    z-index: 4;
+  }
+  #setPlayer {
+    position: absolute;
+    cursor: pointer;
+    display: inline-block;
+    top: 5px;
+    right: 5px;
+    width: 15px;
+    height: 15px;
+    background-color: blue;
     z-index: 4;
   }
 `;
