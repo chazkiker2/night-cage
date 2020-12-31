@@ -43,7 +43,7 @@ type SProps = {
 
 const Tile: React.FC<Props> = ({ children, loc, containing = "empty", tile }) => {
   const game = useSelector(selectGame);
-  const tiles = game;
+  // const tiles = game;
   const players = game.players;
 
   const dispatch = useDispatch();
@@ -66,8 +66,11 @@ const Tile: React.FC<Props> = ({ children, loc, containing = "empty", tile }) =>
 
   const handleSetPlayer = (evt: React.MouseEvent) => {
     evt.stopPropagation();
-    dispatch(setPlayer({ location: loc, playerColor: players.playing }));
+    // console.log({ location: loc, playerColor: players.playing });
+    console.log(loc);
+    dispatch(setPlayer(loc));
   }
+
 
   if (containing === "empty") {
     return (<TileSlot onClick={handleSetTile} />);
@@ -77,18 +80,18 @@ const Tile: React.FC<Props> = ({ children, loc, containing = "empty", tile }) =>
         <TileContainer
           onClick={select}
           rotation={rotation}
-          selected={tiles.selected?.id === tile.id}
+          selected={game.selected?.id === tile.id}
         >
           <span id="select" onClick={rotate} />
           <span id="setPlayer" onClick={handleSetPlayer} />
           {/* <Candle color={"yellow"} /> */}
           {/* <Candle color={undefined} /> */}
-          {/* {players.red.location === loc && loc >= 0 ? <Candle color={"red"} /> : null}
-          {players.green.location === loc && loc >= 0 ? <Candle color={"green"} /> : null}
-          {players.yellow.location === loc && loc >= 0 ? <Candle color={"yellow"} /> : null}
-          {players.blue.location === loc && loc >= 0 ? <Candle color={"blue"} /> : null} */}
+          {players.red.location === loc ? <Candle color={"red"} /> : null}
+          {players.green.location === loc ? <Candle color={"green"} /> : null}
+          {players.yellow.location === loc ? <Candle color={"yellow"} /> : null}
+          {players.blue.location === loc ? <Candle color={"blue"} /> : null}
 
-          <Candle color={tile.player} />
+          {/* <Candle color={tile.player} /> */}
           <ContainedTile containing={containing} tile={tile} />
         </TileContainer>
       </TileSlot>

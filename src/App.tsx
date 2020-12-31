@@ -20,6 +20,9 @@ const App = () => {
             <Route path="/play">
               <PlayHome />
             </Route>
+            <Route exact path="/">
+              <Header />
+            </Route>
           </Switch>
         </StyledApp>
       </Router>

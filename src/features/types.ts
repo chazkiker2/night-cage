@@ -26,9 +26,7 @@ export type PositionMap = {
 export interface Tile {
   id: number;
   name: string;
-  // directions: Direction[];
   turnsToPit: boolean;
-  willBePit: boolean;
   active: boolean;
   player: Colors | null;
   location?: number;
@@ -44,25 +42,25 @@ export interface PlayerTile {
 export interface GameState {
   bag: Array<Tile>;
   queue: Array<Tile>;
-  board: TileMap;
   selected: Tile | null;
   selectedPlayer?: PlayerTile | null;
   players: PlayersState;
-  board2d: Tile[][];
+  board: Tile[][];
 }
 
 export type Direction = "up" | "right" | "down" | "left";
 
+export type Colors = "red" | "blue" | "green" | "yellow";
+
 export type Player = {
   tile: PlayerTile;
   color: Colors;
-  location: number;
+  location: [number, number];
   options: Direction[];
   isLit: boolean;
   nerveCount: number;
 };
 
-export type Colors = "red" | "blue" | "green" | "yellow";
 
 export type PlayersState = {
   [key: string]: any;

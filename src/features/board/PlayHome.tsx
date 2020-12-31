@@ -2,12 +2,12 @@ import React from "react";
 import styled from "styled-components";
 import Queue from "../tiles/queue/Queue";
 import ClassicBoard from "./ClassicBoard";
-// import Header from "../../shared/Header";
 import { CandleQueue, TurnTracker } from "../player";
 
 const PlayHome = (props: any) => {
   return (
     <>
+      
       <BoardContainer>
         <CandleQueue />
         <Queue />

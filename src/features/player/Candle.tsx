@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useRef } from "react";
 import styled from "styled-components";
-import { useDispatch } from "react-redux";
-import { selectPlayerTile } from "../gameSlice";
-// import { setPlayer } from "../tiles/tileSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { selectPlayerTile, selectGame } from "../gameSlice";
+
 
 type Props = {
   children?: React.ReactNode;
@@ -10,9 +10,10 @@ type Props = {
 }
 
 const Candle: React.FC<Props> = ({ color }) => {
-  // const game = useSelector(selectGame);
+  const game = useSelector(selectGame);
+  // const { selectedPlayer } = game;
   const dispatch = useDispatch();
-
+  const inputEl = useRef(null);
   // const testSlice = () => {
   //   dispatch(setPlayer({ player: player.yellow, location: 0 }));
   // }
@@ -21,14 +22,35 @@ const Candle: React.FC<Props> = ({ color }) => {
     if (color !== undefined) {
       dispatch(selectPlayerTile(color))
     }
-
   }
+
+  // useEffect(() => {
+  //   if (selectedPlayer === color && inputEl) {
+  //     // @ts-ignore
+  //     inputEl && inputEl.current && inputEl.current.focus();
+  //   }
+  // }, [selectedPlayer, color])
+
+  const handleKeyPress: React.KeyboardEventHandler<HTMLInputElement> = (evt: React.KeyboardEvent) => {
+    // code:"ArrowUp"
+    // "ArrowDown"
+    // "ArrowRight"
+    // "ArrowLeft"
+    evt.stopPropagation();
+    console.log(evt);
+  }
+
 
   if (!color) {
     return null;
   }
   return (
-    <SCandle color={color} onClick={handleSelectCandle}>
+    <SCandle
+      color={color}
+      onClick={handleSelectCandle}
+      onKeyDown={handleKeyPress}
+    >
+      <input type="text" value="" onKeyDown={handleKeyPress} ref={inputEl} />
       <span id="flame" />
       <span id="stick" />
       <span id="base" />
@@ -54,6 +76,9 @@ const SCandle = styled.div<Props>`
   text-align: center;
   border-radius: 10px;
   border: 2px solid ${({ color }) => color};
+  input {
+    display: none;
+  }
   #flame {
     display: block;
     width: 15px;
