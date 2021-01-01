@@ -2,19 +2,28 @@ import React from "react";
 import styled from "styled-components";
 import Queue from "../tiles/queue/Queue";
 import ClassicBoard from "./ClassicBoard";
-import { CandleQueue, TurnTracker } from "../player";
+import { TurnTracker } from "../player";
 
 const PlayHome = (props: any) => {
   return (
     <>
       <BoardContainer>
-        <Queue />
-        <TurnTracker />
+        <ToolBar>
+          <Queue />
+          <TurnTracker />
+        </ToolBar>
         <ClassicBoard />
       </BoardContainer>
     </>
   );
 }
+
+const ToolBar = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+`;
 
 const BoardContainer = styled.div`
   width: 100vw;

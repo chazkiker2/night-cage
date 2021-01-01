@@ -42,6 +42,7 @@ export interface PlayerTile {
 export interface GameState {
   bag: Array<Tile>;
   queue: Array<Tile>;
+  void: Array<Tile>;
   selected: Tile | null;
   selectedPlayer?: PlayerTile | null;
   players: PlayersState;

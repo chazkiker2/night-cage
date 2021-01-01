@@ -57,6 +57,7 @@ const initialState: GameState = {
   bag: bag,
   board: initBoard2d,
   queue: initTileQueue,
+  void: [],
   selected: null,
   players: {
     turnOrder: {
@@ -87,6 +88,12 @@ export const gameSlice = createSlice({
       const { location, tile } = action.payload;
       const [i, j] = location;
       state.board[i][j] = tile;
+    },
+    voidTile: (state, action: PayloadAction<[number, number]>) => {
+      const [i, j] = action.payload;
+      const tile = state.board[i][j];
+      state.void.push(tile);
+      state.board[i][j] = new EmptyTileData(i, j);
     },
     setTileFromQueue: (state, action: PayloadAction<[number, number]>) => {
       if (state.selected !== null) {
@@ -195,6 +202,7 @@ export const {
   selectPlayerTile,
   rotateTile,
   movePlayer,
+  voidTile,
 } = gameSlice.actions;
 export const selectGame = (state: RootState) => state.game;
 export default gameSlice.reducer;
