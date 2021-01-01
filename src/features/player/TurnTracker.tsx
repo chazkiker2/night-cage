@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import { selectGame, endTurn } from "../gameSlice";
 import { Heading, Anchor } from "../../shared/layout";
+
 type Props = {}
 
 const TurnTracker: React.FC<Props> = (props) => {
@@ -13,7 +14,7 @@ const TurnTracker: React.FC<Props> = (props) => {
   return (
     <STracker>
       <Heading h4>Turn: {players.playing}</Heading>
-      <Anchor onClick={() => dispatch(endTurn())}>End Turn</Anchor>
+      <Anchor onClick={() => dispatch(endTurn())} bgColor={players.playing}>End Turn</Anchor>
     </STracker>
   )
 }

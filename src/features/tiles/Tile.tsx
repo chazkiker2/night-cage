@@ -6,7 +6,8 @@ import {
   selectGame,
   setPlayer,
   setTileFromQueue,
-  rotateTile
+  rotateTile,
+  voidTile
 } from "../gameSlice";
 import {
   Gate,
@@ -95,8 +96,12 @@ const Tile: React.FC<Props> = ({ children, loc, containing = "empty", tile }) =>
 
   const handleSetPlayer = (evt: React.MouseEvent) => {
     evt.stopPropagation();
-    console.log(loc);
     dispatch(setPlayer(loc));
+  }
+
+  const handleVoidTile = (evt: React.MouseEvent) => {
+    evt.stopPropagation();
+    dispatch(voidTile(loc))
   }
 
 
@@ -111,8 +116,9 @@ const Tile: React.FC<Props> = ({ children, loc, containing = "empty", tile }) =>
           selected={game.selected?.id === tile.id}
         >
           <TileUtils rotation={rotation}>
-            <span id="select" onClick={rotate} />
-            <span id="setPlayer" onClick={handleSetPlayer} />
+            <span className="util" id="select" onClick={rotate} />
+            <span className="util" id="setPlayer" onClick={handleSetPlayer} />
+            <span className="util" id="voidTile" onClick={handleVoidTile} />
 
             {
               candle && <Candle color={candle} />
@@ -171,27 +177,28 @@ const TileUtils = styled.div<SProps>`
   z-index: 4;
   transform: ${({ rotation }) => `rotate(-${rotation}deg)`};
   transition: transform 0.2s ease-in-out;
-  #select {
+  .util {
     position: absolute;
     cursor: pointer;
     display: inline-block;
-    top: 5px;
-    left: 5px;
     width: 15px;
     height: 15px;
-    background-color: yellow;
     z-index: 4;
   }
+  #select {
+    top: 5px;
+    left: 5px;
+    background-color: yellow;
+  }
   #setPlayer {
-    position: absolute;
-    cursor: pointer;
-    display: inline-block;
     top: 5px;
     right: 5px;
-    width: 15px;
-    height: 15px;
     background-color: blue;
-    z-index: 4;
+  }
+  #voidTile {
+    bottom: 5px;
+    left: 5px;
+    background-color: red;
   }
 `;
 

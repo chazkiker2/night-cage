@@ -15,11 +15,6 @@ const ClassicBoard: React.FC<Props> = (props) => {
   return (
     <Page>
       <SixBySixCage>
-        {/* {
-          Object.entries(tiles.board).map(([k, v]) => {
-            return <Tile key={k} loc={Number.parseInt(k)} tile={v} containing={v.name} />
-          })
-        } */}
         {
           tiles.board?.map(x => {
             return x.map(y => {

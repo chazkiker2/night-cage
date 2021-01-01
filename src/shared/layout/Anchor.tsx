@@ -1,22 +1,21 @@
 import React from "react";
 import styled, { css } from "styled-components";
-// import { generalClickerStyles } from "./Link";
-
 interface AnchorProps extends React.HTMLProps<HTMLAnchorElement> {
   secondary?: boolean;
   onClick?: (e: any) => void;
+  bgColor?: string;
 }
 
 const Anchor: React.FC<AnchorProps> = (props: AnchorProps) => {
   if (props.secondary) {
     return (
-      <StyledAnchor secondary={props.secondary} href={props.href} onClick={props.onClick}>
+      <StyledAnchor bgColor={props.bgColor} secondary={props.secondary} href={props.href} onClick={props.onClick}>
         {props.children}
       </StyledAnchor>
     );
   }
   return (
-    <StyledAnchor onClick={props.onClick} href={props.href}>
+    <StyledAnchor bgColor={props.bgColor} onClick={props.onClick} href={props.href}>
       {props.children}
     </StyledAnchor>
   )
@@ -26,7 +25,7 @@ const clickerStyles = css`
 	appearance: none;
 	-moz-appearance: none;
   -webkit-appearance: none;
-	background-color: var(--tBase);
+	/* background-color: var(--tBase); */
 	color: var(--white);
 	display: inline-flex;
 	flex-flow: row nowrap;
@@ -69,6 +68,7 @@ const secondaryClickerStyles = css`
 `;
 
 export const generalClickerStyles = css<AnchorProps>`
+  background-color: ${props => props.bgColor ?? "var(--tBase)"};
   ${clickerStyles};
 	${props => {
     return (props.secondary && secondaryClickerStyles)
