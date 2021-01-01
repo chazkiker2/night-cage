@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../app/store";
 import { GameState, Tile, Colors, Player, PlayerTile, Direction } from "./types";
-import { bag, initTileQueue, EmptyTileData } from "./tiles/seedData";
+import { bag, initTileQueue, EmptyTileData, Pit } from "./tiles/seedData";
 
 const PlY: Player = {
   tile: {
@@ -131,11 +131,18 @@ export const gameSlice = createSlice({
         return;
       }
       const tile = state.board[i][j];
+      const [iB, jB] = state.players.blue.location;
+      const [iR, jR] = state.players.red.location;
+      const [iY, jY] = state.players.yellow.location;
+      const [iG, jG] = state.players.green.location;
+
       if (tile) {
         tile.currentPosition + 90 >= 360 ? tile.currentPosition -= 270 : tile.currentPosition += 90;
-        if (tile.player) {
-          state.players[tile.player].options = tile.positionMap[tile.currentPosition];
-        }
+        if (iB === i && jB === j) { state.players.blue.options = tile.positionMap[tile.currentPosition] }
+        if (iR === i && jR === j) { state.players.red.options = tile.positionMap[tile.currentPosition] }
+        if (iY === i && jY === j) { state.players.yellow.options = tile.positionMap[tile.currentPosition] }
+        if (iG === i && jG === j) { state.players.green.options = tile.positionMap[tile.currentPosition] }
+
       }
     },
     movePlayer: (state, action: PayloadAction<Direction>) => {
@@ -144,36 +151,35 @@ export const gameSlice = createSlice({
       if (player.options.includes(dir)) {
         const [i, j] = player.location;
         const tile = state.board[i][j];
-        let newTile;
+        if (tile.active && tile.turnsToPit) {
+          state.board[i][j] = new Pit([i, j]);
+        }
+        let ni = i, nj = j;
         switch (dir) {
           case "up":
-            let ui = i - 1 < 0 ? 5 : i - 1;
-            player.location = [ui, j];
-            // player.location = { 0: ui, 1: j };
-            newTile = state.board[ui][j];
-            newTile.player = player.color;
+            ni = i - 1 < 0 ? 5 : i - 1;
             break;
           case "right":
-            let rj = j + 1 > 5 ? 0 : j + 1;
-            player.location = [i, rj];
-            newTile = state.board[i][rj];
-            newTile.player = player.color;
+            nj = j + 1 > 5 ? 0 : j + 1;
             break;
           case "down":
-            let di = i + 1 > 5 ? 0 : i + 1;
-            player.location = [di, j];
-            newTile = state.board[di][j];
-            newTile.player = player.color;
+            ni = i + 1 > 5 ? 0 : i + 1;
             break;
           case "left":
-            let lj = j - 1 < 0 ? 5 : j - 1;
-            player.location = [i, lj];
-            newTile = state.board[i][lj];
-            newTile.player = player.color;
+            nj = j - 1 < 0 ? 5 : j - 1;
             break;
           default:
             break;
         }
+        if (ni >= 0 && nj >= 0) {
+          player.location = [ni, nj];
+
+          const newTile = state.board[ni][nj];
+          newTile.player = player.color;
+          newTile.active = true;
+          player.options = newTile.positionMap[newTile.currentPosition];
+        }
+
       }
     }
   }
@@ -191,5 +197,4 @@ export const {
   movePlayer,
 } = gameSlice.actions;
 export const selectGame = (state: RootState) => state.game;
-// export const selectPlayers = (state: RootState) => state.game.players;
 export default gameSlice.reducer;
