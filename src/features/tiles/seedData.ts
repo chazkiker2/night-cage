@@ -130,10 +130,10 @@ class GateData extends TileData {
 }
 
 const straightPosition: PositionMap = {
-  0: ["up", "down"],
-  90: ["right", "left"],
-  180: ["down", "up"],
-  270: ["left", "right"]
+  0: ["left", "right"],
+  90: ["up", "down"],
+  180: ["right", "left"],
+  270: ["down", "up"],
 }
 class StraightPassageData extends TileData {
   constructor() {
@@ -148,10 +148,10 @@ class StraightPassageData extends TileData {
 }
 
 const tPosition: PositionMap = {
-  0: ["up", "right", "down"],
-  90: ["right", "down", "left"],
-  180: ["down", "left", "up"],
-  270: ["left", "up", "right"]
+  0: ["left", "up", "right"],
+  90: ["up", "right", "down"],
+  180: ["right", "down", "left"],
+  270: ["down", "left", "up"],
 }
 class PassageTData extends TileData {
   constructor() {
@@ -173,6 +173,19 @@ class PassageFourWay extends TileData {
       false,
       false,
       false,
+    )
+  }
+}
+
+export class Pit extends TileData {
+  constructor(location: [number, number]) {
+    super(
+      "pit",
+      allDirectionPosition,
+      false,
+      false,
+      false,
+      location
     )
   }
 }

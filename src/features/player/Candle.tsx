@@ -1,8 +1,8 @@
-import React, { useRef } from "react";
+import React from "react";
 import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
-import { selectPlayerTile, selectGame } from "../gameSlice";
-
+import { useDispatch } from "react-redux";
+import { movePlayer } from "../gameSlice";
+import { Direction } from "../types";
 
 type Props = {
   children?: React.ReactNode;
@@ -10,81 +10,78 @@ type Props = {
 }
 
 const Candle: React.FC<Props> = ({ color }) => {
-  const game = useSelector(selectGame);
-  // const { selectedPlayer } = game;
   const dispatch = useDispatch();
-  const inputEl = useRef(null);
-  // const testSlice = () => {
-  //   dispatch(setPlayer({ player: player.yellow, location: 0 }));
-  // }
-  const handleSelectCandle = (evt: React.MouseEvent) => {
+
+  const handleMove = (evt: React.MouseEvent, dir: Direction) => {
     evt.stopPropagation();
-    if (color !== undefined) {
-      dispatch(selectPlayerTile(color))
-    }
+    dispatch(movePlayer(dir));
   }
-
-  // useEffect(() => {
-  //   if (selectedPlayer === color && inputEl) {
-  //     // @ts-ignore
-  //     inputEl && inputEl.current && inputEl.current.focus();
-  //   }
-  // }, [selectedPlayer, color])
-
-  const handleKeyPress: React.KeyboardEventHandler<HTMLInputElement> = (evt: React.KeyboardEvent) => {
-    // code:"ArrowUp"
-    // "ArrowDown"
-    // "ArrowRight"
-    // "ArrowLeft"
-    evt.stopPropagation();
-    console.log(evt);
-  }
-
 
   if (!color) {
     return null;
   }
   return (
-    <SCandle
-      color={color}
-      onClick={handleSelectCandle}
-      onKeyDown={handleKeyPress}
-    >
-      <input type="text" value="" onKeyDown={handleKeyPress} ref={inputEl} />
-      <span id="flame" />
-      <span id="stick" />
-      <span id="base" />
-    </SCandle>
+    <>
+      <SCandle
+        color={color}
+      >
+        <span className="move" id="up" onClick={(e) => handleMove(e, "up")} />
+        <span className="move" id="right" onClick={(e) => handleMove(e, "right")} />
+        <span className="move" id="down" onClick={(e) => handleMove(e, "down")} />
+        <span className="move" id="left" onClick={(e) => handleMove(e, "left")} />
+        <span id="flame" />
+        <span id="stick" />
+        <span id="base" />
+      </SCandle>
+    </>
   )
 }
 
 const SCandle = styled.div<Props>`
   background-color: rgba(0,0,0,0.4);
-  /* background-color: rgba(255,255,255,0.1); */
-  padding: 4px;
-  /* background-color: black; */
-  /* opacity: 0.2; */
+  padding: 20px;
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
   position: absolute;
-  cursor: pointer;
-  top: 30px;
-  left: 50px;
+  top: 20px;
+  left: 32px;
   z-index: 4;
   text-align: center;
   border-radius: 10px;
   border: 2px solid ${({ color }) => color};
-  input {
-    display: none;
+  .move {
+    position: absolute;
+    cursor: pointer;
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 14px solid var(--white);
+    z-index: 4;
   }
+  #up {
+    top: 0px;
+  }
+  #right {
+    transform: rotate(90deg);
+    right: 0px;
+  }
+  #down {
+    transform: rotate(180deg);
+    bottom: 0px;
+  }
+  #left {
+    transform: rotate(270deg);
+    left: 0px;
+  }
+
   #flame {
     display: block;
     width: 15px;
     height: 15px;
-    /* border-radius: 50%; */
-    /* border-radius: 0 50% 50% 50%; */
     border-radius: 80% 0 55% 50% / 55% 0 80% 50%;
     transform: rotate(-45deg);
     background-color: ${({ color }) => color};
@@ -93,7 +90,7 @@ const SCandle = styled.div<Props>`
     margin: 2px;
     display: block;
     width: 15px;
-    height: 50px;
+    height: 40px;
     background-color: ${({ color }) => color};
   }
   #base {

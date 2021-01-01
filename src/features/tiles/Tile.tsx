@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -19,6 +19,7 @@ import {
   WaxEater
 } from "./";
 import { Candle } from "../player";
+import { Colors } from "../types";
 
 type Props = {
   children?: React.ReactNode;
@@ -43,15 +44,43 @@ type SProps = {
 
 const Tile: React.FC<Props> = ({ children, loc, containing = "empty", tile }) => {
   const game = useSelector(selectGame);
+  const dispatch = useDispatch();
+  // const [rotation, setRotation] = useState(0);
+  const rotation = tile.currentPosition;
+  const [candle, setCandle] = useState<Colors | null>(null);
   // const tiles = game;
   const players = game.players;
+  const { red, green, blue, yellow } = players;
+  const rLoc = red.location;
+  const gLoc = green.location;
+  const bLoc = blue.location;
+  const yLoc = yellow.location;
 
-  const dispatch = useDispatch();
-  const [rotation, setRotation] = useState(0);
+
+  useEffect(() => {
+    const [rR, rC] = rLoc;
+    const [bR, bC] = bLoc;
+    const [yR, yC] = yLoc;
+    const [gR, gC] = gLoc;
+    const [r, c] = loc;
+
+    if (rR === r && rC === c) {
+      setCandle("red");
+    } else if (gR === r && gC === c) {
+      setCandle("green");
+    } else if (yR === r && yC === c) {
+      setCandle("yellow");
+    } else if (bR === r && bC === c) {
+      setCandle("blue");
+    } else {
+      setCandle(null);
+    }
+
+  }, [rLoc, gLoc, bLoc, yLoc, loc]);
+
 
   const rotate = (evt: React.MouseEvent) => {
     evt.stopPropagation();
-    setRotation(rotation + 90 >= 360 ? rotation - 270 : rotation + 90);
     dispatch(rotateTile(loc));
   }
 
@@ -66,7 +95,6 @@ const Tile: React.FC<Props> = ({ children, loc, containing = "empty", tile }) =>
 
   const handleSetPlayer = (evt: React.MouseEvent) => {
     evt.stopPropagation();
-    // console.log({ location: loc, playerColor: players.playing });
     console.log(loc);
     dispatch(setPlayer(loc));
   }
@@ -82,16 +110,15 @@ const Tile: React.FC<Props> = ({ children, loc, containing = "empty", tile }) =>
           rotation={rotation}
           selected={game.selected?.id === tile.id}
         >
-          <span id="select" onClick={rotate} />
-          <span id="setPlayer" onClick={handleSetPlayer} />
-          {/* <Candle color={"yellow"} /> */}
-          {/* <Candle color={undefined} /> */}
-          {players.red.location === loc ? <Candle color={"red"} /> : null}
-          {players.green.location === loc ? <Candle color={"green"} /> : null}
-          {players.yellow.location === loc ? <Candle color={"yellow"} /> : null}
-          {players.blue.location === loc ? <Candle color={"blue"} /> : null}
+          <TileUtils rotation={rotation}>
+            <span id="select" onClick={rotate} />
+            <span id="setPlayer" onClick={handleSetPlayer} />
 
-          {/* <Candle color={tile.player} /> */}
+            {
+              candle && <Candle color={candle} />
+            }
+          </TileUtils>
+
           <ContainedTile containing={containing} tile={tile} />
         </TileContainer>
       </TileSlot>
@@ -137,19 +164,13 @@ const TileSlot = styled.div`
   position: relative;
 `;
 
-const TileContainer = styled.div<SProps>`
-	height: 100%;
+const TileUtils = styled.div<SProps>`
+  height: 100%;
 	width: 100%;
-	display: flex;
-	flex-flow: column nowrap;
-	justify-content: center;
-	align-items: center;
-	overflow: hidden;
-	border: 1px solid ${({ selected }) => selected ? "blue" : "white"};
-	background: var(--pDarker);
-	transform: ${({ rotation }) => `rotate(${rotation}deg)`};
-	transition: transform 0.2s ease-in-out;
-  position: relative;
+  position: absolute;
+  z-index: 4;
+  transform: ${({ rotation }) => `rotate(-${rotation}deg)`};
+  transition: transform 0.2s ease-in-out;
   #select {
     position: absolute;
     cursor: pointer;
@@ -172,6 +193,21 @@ const TileContainer = styled.div<SProps>`
     background-color: blue;
     z-index: 4;
   }
+`;
+
+const TileContainer = styled.div<SProps>`
+	height: 100%;
+	width: 100%;
+	display: flex;
+	flex-flow: column nowrap;
+	justify-content: center;
+	align-items: center;
+	overflow: hidden;
+	border: 1px solid ${({ selected }) => selected ? "blue" : "white"};
+	background: var(--pDarker);
+	transform: ${({ rotation }) => `rotate(${rotation}deg)`};
+	transition: transform 0.2s ease-in-out;
+  position: relative;
 `;
 
 export default Tile;

@@ -7,9 +7,7 @@ import { CandleQueue, TurnTracker } from "../player";
 const PlayHome = (props: any) => {
   return (
     <>
-      
       <BoardContainer>
-        <CandleQueue />
         <Queue />
         <TurnTracker />
         <ClassicBoard />
