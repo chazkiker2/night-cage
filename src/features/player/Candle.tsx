@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { selectPlayerTile, selectGame } from "../gameSlice";
+import { selectPlayerTile, selectGame, movePlayer } from "../gameSlice";
 
 
 type Props = {
@@ -22,6 +22,10 @@ const Candle: React.FC<Props> = ({ color }) => {
     if (color !== undefined) {
       dispatch(selectPlayerTile(color))
     }
+  }
+
+  const handleMove = (evt: React.MouseEvent) => {
+    dispatch(movePlayer("up"));
   }
 
   // useEffect(() => {
@@ -45,16 +49,19 @@ const Candle: React.FC<Props> = ({ color }) => {
     return null;
   }
   return (
-    <SCandle
-      color={color}
-      onClick={handleSelectCandle}
-      onKeyDown={handleKeyPress}
-    >
-      <input type="text" value="" onKeyDown={handleKeyPress} ref={inputEl} />
-      <span id="flame" />
-      <span id="stick" />
-      <span id="base" />
-    </SCandle>
+    <>
+      <SCandle
+        color={color}
+        onClick={handleSelectCandle}
+        onKeyDown={handleKeyPress}
+      >
+        <span id="move" onClick={handleMove} />
+        <input type="text" value="" onKeyDown={handleKeyPress} ref={inputEl} />
+        <span id="flame" />
+        <span id="stick" />
+        <span id="base" />
+      </SCandle>
+    </>
   )
 }
 
@@ -79,6 +86,17 @@ const SCandle = styled.div<Props>`
   input {
     display: none;
   }
+  #move {
+    position: absolute;
+    cursor: pointer;
+    display: inline-block;
+    top: 2px;
+    width: 10px;
+    height: 10px;
+    background-color: yellow;
+    z-index: 4;
+  }
+
   #flame {
     display: block;
     width: 15px;

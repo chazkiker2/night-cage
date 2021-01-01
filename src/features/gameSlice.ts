@@ -143,18 +143,33 @@ export const gameSlice = createSlice({
       const player = state.players[state.players.playing];
       if (player.options.includes(dir)) {
         const [i, j] = player.location;
+        const tile = state.board[i][j];
+        let newTile;
         switch (dir) {
           case "up":
-            player.location = [(i - 1 < 0 ? 5 : i - 1), j];
+            let ui = i - 1 < 0 ? 5 : i - 1;
+            player.location = [ui, j];
+            // player.location = { 0: ui, 1: j };
+            newTile = state.board[ui][j];
+            newTile.player = player.color;
             break;
           case "right":
-            player.location = [i, (j + 1 > 5 ? 0 : j + 1)];
+            let rj = j + 1 > 5 ? 0 : j + 1;
+            player.location = [i, rj];
+            newTile = state.board[i][rj];
+            newTile.player = player.color;
             break;
           case "down":
-            player.location = [(i + 1 > 5 ? 0 : i + 1), j];
+            let di = i + 1 > 5 ? 0 : i + 1;
+            player.location = [di, j];
+            newTile = state.board[di][j];
+            newTile.player = player.color;
             break;
           case "left":
-            player.location = [i, (j - 1 < 0 ? 5 : j - 1)];
+            let lj = j - 1 < 0 ? 5 : j - 1;
+            player.location = [i, lj];
+            newTile = state.board[i][lj];
+            newTile.player = player.color;
             break;
           default:
             break;
@@ -172,7 +187,8 @@ export const {
   setPlayer,
   endTurn,
   selectPlayerTile,
-  rotateTile
+  rotateTile,
+  movePlayer,
 } = gameSlice.actions;
 export const selectGame = (state: RootState) => state.game;
 // export const selectPlayers = (state: RootState) => state.game.players;

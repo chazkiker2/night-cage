@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -19,6 +19,7 @@ import {
   WaxEater
 } from "./";
 import { Candle } from "../player";
+import { Colors } from "../types";
 
 type Props = {
   children?: React.ReactNode;
@@ -45,6 +46,35 @@ const Tile: React.FC<Props> = ({ children, loc, containing = "empty", tile }) =>
   const game = useSelector(selectGame);
   // const tiles = game;
   const players = game.players;
+  const { red, green, blue, yellow } = players;
+  const rLoc = red.location;
+  const gLoc = green.location;
+  const bLoc = blue.location;
+  const yLoc = yellow.location;
+
+  const [c, setC] = useState<Colors | null>(null);
+
+  useEffect(() => {
+    const [rR, rC] = rLoc;
+    const [bR, bC] = bLoc;
+    const [yR, yC] = yLoc;
+    const [gR, gC] = gLoc;
+    const [r, c] = loc;
+
+    if (rR === r && rC === c) {
+      setC("red");
+    }
+    if (gR === r && gC === c) {
+      setC("green");
+    }
+    if (yR === r && yC === c) {
+      setC("yellow");
+    }
+    if (bR === r && bC === c) {
+      setC("blue");
+    }
+
+  }, [rLoc, gLoc, bLoc, yLoc, loc]);
 
   const dispatch = useDispatch();
   const [rotation, setRotation] = useState(0);
@@ -86,6 +116,13 @@ const Tile: React.FC<Props> = ({ children, loc, containing = "empty", tile }) =>
           <span id="setPlayer" onClick={handleSetPlayer} />
           {/* <Candle color={"yellow"} /> */}
           {/* <Candle color={undefined} /> */}
+          {
+            c && <Candle color={c} />
+          }
+          {/* (c !== null)
+              ? <Candle color={c} />
+              : null; */}
+
           {players.red.location === loc ? <Candle color={"red"} /> : null}
           {players.green.location === loc ? <Candle color={"green"} /> : null}
           {players.yellow.location === loc ? <Candle color={"yellow"} /> : null}
