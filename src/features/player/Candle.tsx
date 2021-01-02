@@ -18,6 +18,15 @@ type CandleUtilProps = {
   display: boolean;
 }
 
+type DirectionProps = {
+  avail: boolean;
+  className?: string;
+  id?: string;
+  color: Color;
+  onClick?: any;
+  // onClick: (e: React.MouseEvent) => void;
+}
+
 const Candle: React.FC<CandleProps> = ({ color, utils = true }) => {
   const game = useSelector(selectGame);
   const dispatch = useDispatch();
@@ -29,6 +38,10 @@ const Candle: React.FC<CandleProps> = ({ color, utils = true }) => {
     // const target = evt.target;
     // console.log(target.); 
     dispatch(movePlayer(dir));
+  }
+  const handleMoveUp = (evt: React.MouseEvent, dir: Direction) => {
+    evt.stopPropagation();
+    dispatch(movePlayer("up"));
   }
 
 
@@ -46,7 +59,8 @@ const Candle: React.FC<CandleProps> = ({ color, utils = true }) => {
             avail={player.options.includes("up")}
             color={color}
             id="up"
-            onClick={(e: React.MouseEvent) => handleMove(e, "up")}
+            onClick={handleMoveUp}
+          // onClick={(e: React.MouseEvent) => handleMove(e, "up")}
           />
           <DirectionArrow
             avail={player.options.includes("right")}
@@ -75,13 +89,6 @@ const Candle: React.FC<CandleProps> = ({ color, utils = true }) => {
   )
 }
 
-type DirectionProps = {
-  avail: boolean;
-  className?: string;
-  id?: string;
-  color: Color;
-  onClick: (e: React.MouseEvent) => void;
-}
 
 const DirectionArrow = styled.div<DirectionProps>`
   position: absolute;

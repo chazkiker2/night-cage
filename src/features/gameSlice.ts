@@ -243,81 +243,32 @@ export const gameSlice = createSlice({
       }
     },
     movePlayer: (state, action: PayloadAction<Direction>) => {
-      try {
-
-
-        const dir = action.payload;
-        const player = state.players[state.players.playing];
-        if (player.options.includes(dir)) {
-          const [i, j] = player.location;
-          const tile = state.board[i][j];
-          if (tile.active && tile.turnsToPit) {
-            state.board[i][j] = new Pit([i, j]);
-          }
-          const initSurIdx = getSurroundingIdx(i, j);
-
-          const [ui, uj] = initSurIdx.up;
-          state.board[ui][uj].illuminated.splice(
-            state.board[ui][uj].illuminated.findIndex(x => x === player.color), 1);
-
-          const [di, dj] = initSurIdx.down;
-          state.board[di][dj].illuminated.splice(
-            state.board[di][dj].illuminated.findIndex(x => x === player.color), 1);
-
-          const [li, lj] = initSurIdx.left;
-          state.board[li][lj].illuminated.splice(
-            state.board[li][lj].illuminated.findIndex(x => x === player.color), 1);
-
-          const [ri, rj] = initSurIdx.right;
-          state.board[ri][rj].illuminated.splice(
-            state.board[ri][rj].illuminated.findIndex(x => x === player.color), 1);
-
-          // Object.keys(initSurIdx).forEach(key => {
-          //   const [xi, xj] = initSurIdx[key];
-          //   state.board[xi][xj].illuminated = state.board[xi][xj].illuminated.filter(x => x !== player.color);
-          //   console.log(state.board[xi][xj]);
-          //   // state.board[xi][xj].illuminated.splice(
-          //   //   state.board[xi][xj].illuminated.findIndex(x => x === player.color), 1);
-          // });
-
-
-          let [ni, nj] = initSurIdx[dir];
-
-          if (ni >= 0 && nj >= 0) {
-            player.location = [ni, nj];
-            const secSurIdx = getSurroundingIdx(ni, nj);
-
-            state.board[ni][nj].player = player.color;
-            state.board[ni][nj].active = true;
-
-            const [ui2, uj2] = secSurIdx.up;
-            // state.board[ui2][uj2].illuminated = state.board[ui2][uj2].illuminated.splice(0, 0, player.color);
-
-            const [di2, dj2] = secSurIdx.down;
-            // state.board[di2][dj2].illuminated.splice(0, 0, player.color);
-
-            const [li2, lj2] = secSurIdx.left;
-            // state.board[li2][lj2].illuminated.splice(0, 0, player.color);
-
-            const [ri2, rj2] = secSurIdx.right;
-            // state.board[ri2][rj2].illuminated.splice(0, 0, player.color);
-
-            // Object.keys(secSurIdx).forEach(key => {
-            //   const [xi, xj] = secSurIdx[key];
-            //   // state.board[xi][xj].illuminated = state.board[xi][xj].illuminated.concat(player.color);
-            //   console.log(state.board[xi][xj]);
-            // });
-
-
-            player.options = state.board[ni][nj].positionMap[state.board[ni][nj].currentPosition];
-          }
-
-
+      const dir = action.payload;
+      const player = state.players[state.players.playing];
+      if (player.options.includes(dir)) {
+        const [i, j] = player.location;
+        const tile = state.board[i][j];
+        if (tile.active && tile.turnsToPit) {
+          state.board[i][j] = new Pit([i, j]);
         }
+        const initSurIdx = getSurroundingIdx(i, j);
+        Object.keys(initSurIdx).forEach(key => {
+          const [xi, xj] = initSurIdx[key];
+          state.board[xi][xj].illuminated.splice(
+            state.board[xi][xj].illuminated.findIndex(x => x === player.color), 1);
+        });
+        let [ni, nj] = initSurIdx[action.payload];
+        player.location = [ni, nj];
+        const secSurIdx = getSurroundingIdx(ni, nj);
+        Object.keys(secSurIdx).forEach(key => {
+          const [xi, xj] = secSurIdx[key];
+          state.board[xi][xj] = { ...state.board[xi][xj], illuminated: [...state.board[xi][xj].illuminated, player.color] }
+        });
+        state.board[ni][nj].player = player.color;
+        state.board[ni][nj].active = true;
+        player.options = state.board[ni][nj].positionMap[state.board[ni][nj].currentPosition];
       }
-      catch (err) {
-        console.log(err);
-      }
+
     }
   }
 })
