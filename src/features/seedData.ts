@@ -11,7 +11,6 @@ class TileData implements Tile {
   positionMap: PositionMap;
   currentPosition: 0 | 90 | 180 | 270;
   location: [number, number];
-  // hostMultiple: boolean | undefined;
 
   constructor(
     name: string,

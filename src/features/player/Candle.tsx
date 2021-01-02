@@ -23,8 +23,7 @@ type DirectionProps = {
   className?: string;
   id?: string;
   color: Color;
-  onClick?: any;
-  // onClick: (e: React.MouseEvent) => void;
+  onClick: (e: React.MouseEvent) => void;
 }
 
 const Candle: React.FC<CandleProps> = ({ color, utils = true }) => {
@@ -35,15 +34,8 @@ const Candle: React.FC<CandleProps> = ({ color, utils = true }) => {
 
   const handleMove = (evt: React.MouseEvent, dir: Direction) => {
     evt.stopPropagation();
-    // const target = evt.target;
-    // console.log(target.); 
     dispatch(movePlayer(dir));
   }
-  const handleMoveUp = (evt: React.MouseEvent, dir: Direction) => {
-    evt.stopPropagation();
-    dispatch(movePlayer("up"));
-  }
-
 
   if (!color) {
     return null;
@@ -59,8 +51,7 @@ const Candle: React.FC<CandleProps> = ({ color, utils = true }) => {
             avail={player.options.includes("up")}
             color={color}
             id="up"
-            onClick={handleMoveUp}
-          // onClick={(e: React.MouseEvent) => handleMove(e, "up")}
+            onClick={(e: React.MouseEvent) => handleMove(e, "up")}
           />
           <DirectionArrow
             avail={player.options.includes("right")}
@@ -94,7 +85,6 @@ const DirectionArrow = styled.div<DirectionProps>`
   position: absolute;
   cursor: pointer;
   display: inline-block;
-  /* display: ${({ avail }) => avail ? "inline-block" : "none"}; */
   width: 0;
   height: 0;
   border-left: 9px solid transparent;
@@ -111,17 +101,6 @@ const CandleUtils = styled.div<CandleUtilProps>`
   justify-content: center;
   align-items: center;
   position: absolute;
-  .move {
-    position: absolute;
-    cursor: pointer;
-    display: inline-block;
-    width: 0;
-    height: 0;
-    border-left: 7px solid transparent;
-    border-right: 7px solid transparent;
-    /* border-bottom: 14px solid var(--white); */
-    z-index: 4;
-  }
   #up {
     top: 0px;
   }
@@ -153,11 +132,7 @@ const SCandle = styled.div<SCandleProps>`
   text-align: center;
   border-radius: 10px;
   border: 2px solid ${({ color }) => color};
-
-
   #flame {
-    /* display: block; */
-    /* display: ${({ lit }) => lit ? "inline-block" : "hidden"}; */
     display: inline-block;
     width: 15px;
     height: 15px;
