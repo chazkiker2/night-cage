@@ -5,6 +5,7 @@ class TileData implements Tile {
   id: number;
   name: string;
   turnsToPit: boolean;
+  illuminated: Color[];
   active: boolean;
   player: Color | null;
   positionMap: PositionMap;
@@ -28,6 +29,7 @@ class TileData implements Tile {
       180: [],
       270: []
     };
+    this.illuminated = [];
     this.turnsToPit = turnsToPit ?? false;
     this.active = false;
     this.player = player ?? null;

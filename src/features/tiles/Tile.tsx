@@ -40,6 +40,8 @@ type SProps = {
   rotation: number;
   hover?: boolean;
   selected?: boolean;
+  start?: boolean;
+  editing?: boolean;
 }
 
 
@@ -115,7 +117,10 @@ const Tile: React.FC<Props> = ({ children, loc, containing = "empty", tile }) =>
           rotation={rotation}
           selected={game.selected?.id === tile.id}
         >
-          <TileUtils rotation={rotation}>
+          <TileUtils
+            rotation={rotation}
+            start={containing === "start"}
+          >
             <span className="util" id="select" onClick={rotate} />
             <span className="util" id="setPlayer" onClick={handleSetPlayer} />
             <span className="util" id="voidTile" onClick={handleVoidTile} />
@@ -191,13 +196,14 @@ const TileUtils = styled.div<SProps>`
     background-color: yellow;
   }
   #setPlayer {
-    top: 5px;
-    right: 5px;
+    display: ${({ start }) => start ? "inline-block" : "none"};
+    left: 5px;
+    bottom: 5px;
     background-color: blue;
   }
   #voidTile {
-    bottom: 5px;
-    left: 5px;
+    top: 5px;
+    right: 5px;
     background-color: red;
   }
 `;

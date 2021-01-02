@@ -26,6 +26,7 @@ export interface Tile {
   id: number;
   name: string;
   turnsToPit: boolean;
+  illuminated: Color[];
   active: boolean;
   player: Color | null;
   location: [number, number];
@@ -56,6 +57,7 @@ export type Player = {
   color: Color;
   location: [number, number];
   options: Direction[];
+  hasKey: boolean;
   isLit: boolean;
   nerveCount: number;
 };

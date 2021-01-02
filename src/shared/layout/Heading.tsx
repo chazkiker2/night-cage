@@ -1,4 +1,3 @@
-// export { }
 import React from 'react'
 import styled, { css } from 'styled-components'
 
@@ -11,7 +10,7 @@ interface HeadingProps {
   right?: boolean;
   center?: boolean;
   props?: any;
-  children?: any;
+  children?: React.ReactNode;
 }
 
 const Heading: React.FC<HeadingProps> = ({ h2, h3, h4, h5, noMargin, right, center, ...props }) => {
