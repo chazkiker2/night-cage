@@ -12,13 +12,14 @@ const TurnTracker: React.FC<Props> = (props) => {
   const dispatch = useDispatch();
 
   return (
-    <STracker>
-      <Heading h4>Turn: {players.playing}</Heading>
-      <Anchor onClick={() => dispatch(endTurn())} bgColor={players.playing}>End Turn</Anchor>
-    </STracker>
+    <>
+      <STracker>
+        <Heading h4>Turn: {players.playing}</Heading>
+        <Anchor onClick={() => dispatch(endTurn())} bgColor={players.playing}>End Turn</Anchor>
+      </STracker>
+    </>
   )
 }
-
 const STracker = styled.div`
   width: 500px;
   background-color: var(--pDarker);

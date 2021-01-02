@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import Queue from "../tiles/queue/Queue";
 import ClassicBoard from "./ClassicBoard";
-import { TurnTracker } from "../player";
+import { TurnTracker, PrisonerStatus } from "../player";
 
 const PlayHome = (props: any) => {
   return (
@@ -13,6 +13,7 @@ const PlayHome = (props: any) => {
           <TurnTracker />
         </ToolBar>
         <ClassicBoard />
+        <PrisonerStatus color="red" shown={true} />
       </BoardContainer>
     </>
   );

@@ -1,78 +1,28 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../app/store";
-import { GameState, Tile, Colors, Player, PlayerTile, Direction } from "./types";
-import { bag, initTileQueue, EmptyTileData, Pit } from "./tiles/seedData";
+import { Tile, Color, Direction } from "./types";
+import { EmptyTileData, Pit, initialState } from "./seedData";
 
-const PlY: Player = {
-  tile: {
-    id: "yellow"
-  },
-  color: "yellow",
-  location: [-1, -1],
-  options: [],
-  isLit: true,
-  nerveCount: 1,
+type SurroundingIdx = {
+  [key: string]: [number, number];
+  up: [number, number],
+  right: [number, number],
+  down: [number, number],
+  left: [number, number]
 }
-const PlR: Player = {
-  tile: {
-    id: "red"
-  },
-  color: "red",
-  location: [-1, -1],
-  options: [],
-  isLit: true,
-  nerveCount: 1,
-}
-const PlB: Player = {
-  tile: {
-    id: "blue"
-  },
-  color: "blue",
-  location: [-1, -1],
-  options: [],
-  isLit: true,
-  nerveCount: 1,
-}
-const PlG: Player = {
-  tile: {
-    id: "green"
-  },
-  color: "green",
-  location: [-1, -1],
-  options: [],
-  isLit: true,
-  nerveCount: 1,
-}
+const getSurroundingIdx = (i: number, j: number): SurroundingIdx => {
+  const iDown = i + 1 > 5 ? 0 : i + 1;
+  const iUp = i - 1 < 0 ? 5 : i - 1;
+  const jLeft = j - 1 < 0 ? 5 : j - 1;
+  const jRight = j + 1 > 5 ? 0 : j + 1;
 
-const initBoard2d: Tile[][] = [];
-
-for (let i: number = 0; i < 6; i++) {
-  initBoard2d[i] = [];
-  for (let j: number = 0; j < 6; j++) {
-    initBoard2d[i][j] = new EmptyTileData(i, j);
+  return {
+    up: [iUp, j],
+    right: [i, jRight],
+    down: [iDown, j],
+    left: [i, jLeft]
   }
-}
 
-const initialState: GameState = {
-  bag: bag,
-  board: initBoard2d,
-  queue: initTileQueue,
-  void: [],
-  selected: null,
-  players: {
-    turnOrder: {
-      0: "red",
-      1: "blue",
-      2: "green",
-      3: "yellow"
-    },
-    red: PlR,
-    green: PlG,
-    blue: PlB,
-    yellow: PlY,
-    playCount: 0,
-    playing: "red",
-  },
 }
 
 export const gameSlice = createSlice({
@@ -92,7 +42,7 @@ export const gameSlice = createSlice({
     voidTile: (state, action: PayloadAction<[number, number]>) => {
       const [i, j] = action.payload;
       const tile = state.board[i][j];
-      state.void.push(tile);
+      state.discard.push(tile);
       state.board[i][j] = new EmptyTileData(i, j);
     },
     setTileFromQueue: (state, action: PayloadAction<[number, number]>) => {
@@ -103,7 +53,7 @@ export const gameSlice = createSlice({
           state.queue.splice(idx, 1);
           state.selected = null;
           const [i, j] = action.payload;
-          state.board[i][j] = { ...tile, location2d: action.payload };
+          state.board[i][j] = { ...tile, location: action.payload };
         }
       }
     },
@@ -115,7 +65,7 @@ export const gameSlice = createSlice({
         return;
       }
     },
-    selectPlayerTile: (state, action: PayloadAction<Colors>) => {
+    selectPlayerTile: (state, action: PayloadAction<Color>) => {
       if (state.selected) {
         state.selected = null;
       }
@@ -128,9 +78,15 @@ export const gameSlice = createSlice({
     setPlayer: (state, action: PayloadAction<[number, number]>) => {
       const [i, j] = action.payload;
       const tile = state.board[i][j];
+      tile.active = true;
       const player = state.players[state.players.playing];
       player.options = tile.positionMap[tile.currentPosition];
-      player.location = tile.location2d;
+      player.location = tile.location;
+      const surIdx = getSurroundingIdx(i, j);
+      Object.keys(surIdx).forEach(key => {
+        const [ki, kj] = surIdx[key];
+        state.board[ki][kj] = { ...state.board[ki][kj], illuminated: [...state.board[ki][kj].illuminated, player.color] };
+      });
     },
     rotateTile: (state, action: PayloadAction<[number, number]>) => {
       const [i, j] = action.payload;
@@ -161,32 +117,31 @@ export const gameSlice = createSlice({
         if (tile.active && tile.turnsToPit) {
           state.board[i][j] = new Pit([i, j]);
         }
-        let ni = i, nj = j;
-        switch (dir) {
-          case "up":
-            ni = i - 1 < 0 ? 5 : i - 1;
-            break;
-          case "right":
-            nj = j + 1 > 5 ? 0 : j + 1;
-            break;
-          case "down":
-            ni = i + 1 > 5 ? 0 : i + 1;
-            break;
-          case "left":
-            nj = j - 1 < 0 ? 5 : j - 1;
-            break;
-          default:
-            break;
-        }
-        if (ni >= 0 && nj >= 0) {
-          player.location = [ni, nj];
-
-          const newTile = state.board[ni][nj];
-          newTile.player = player.color;
-          newTile.active = true;
-          player.options = newTile.positionMap[newTile.currentPosition];
-        }
-
+        const initSurIdx = getSurroundingIdx(i, j);
+        Object.keys(initSurIdx).forEach(key => {
+          const [xi, xj] = initSurIdx[key];
+          if (key !== dir) {
+            const filteredIlluminated = state.board[xi][xj].illuminated.filter(x => x !== player.color);
+            if (filteredIlluminated.length <= 0) {
+              state.discard.push(state.board[xi][xj]);
+              state.board[xi][xj] = new EmptyTileData(xi, xj);
+              state.board[xi][xj].illuminated = [];
+            } else {
+              state.board[xi][xj].illuminated.splice(
+                state.board[xi][xj].illuminated.findIndex(x => x === player.color), 1);
+            }
+          }
+        });
+        let [ni, nj] = initSurIdx[action.payload];
+        player.location = [ni, nj];
+        const secSurIdx = getSurroundingIdx(ni, nj);
+        Object.keys(secSurIdx).forEach(key => {
+          const [xi, xj] = secSurIdx[key];
+          state.board[xi][xj] = { ...state.board[xi][xj], illuminated: [...state.board[xi][xj].illuminated, player.color] }
+        });
+        state.board[ni][nj].player = player.color;
+        state.board[ni][nj].active = true;
+        player.options = state.board[ni][nj].positionMap[state.board[ni][nj].currentPosition];
       }
     }
   }
