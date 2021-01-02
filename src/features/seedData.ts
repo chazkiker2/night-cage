@@ -1,4 +1,4 @@
-import { TileMap, Tile, PositionMap, Color } from "./types";
+import { TileMap, Tile, PositionMap, Color, Player, GameState, } from "./types";
 
 class TileData implements Tile {
   static nextId: number = 1;
@@ -197,4 +197,81 @@ for (let i = 0; i < 32; i++) {
 // initialize tile map
 const initialTileMap: TileMap = {}
 
-export { initialTileMap, initTileQueue, bag, TileData };
+const PlY: Player = {
+  tile: {
+    id: "yellow"
+  },
+  color: "yellow",
+  location: [-1, -1],
+  options: [],
+  hasKey: false,
+  isLit: true,
+  nerveCount: 1,
+}
+const PlR: Player = {
+  tile: {
+    id: "red"
+  },
+  color: "red",
+  location: [-1, -1],
+  options: [],
+  hasKey: false,
+  isLit: true,
+  nerveCount: 1,
+}
+const PlB: Player = {
+  tile: {
+    id: "blue"
+  },
+  color: "blue",
+  location: [-1, -1],
+  options: [],
+  hasKey: false,
+  isLit: true,
+  nerveCount: 1,
+}
+const PlG: Player = {
+  tile: {
+    id: "green"
+  },
+  color: "green",
+  location: [-1, -1],
+  options: [],
+  hasKey: false,
+  isLit: true,
+  nerveCount: 1,
+}
+
+const initBoard2d: Tile[][] = [];
+
+for (let i: number = 0; i < 6; i++) {
+  initBoard2d[i] = [];
+  for (let j: number = 0; j < 6; j++) {
+    initBoard2d[i][j] = new EmptyTileData(i, j);
+  }
+}
+
+const initialState: GameState = {
+  bag: bag,
+  board: initBoard2d,
+  queue: initTileQueue,
+  discard: [],
+  selected: null,
+  players: {
+    turnOrder: {
+      0: "red",
+      1: "blue",
+      2: "green",
+      3: "yellow"
+    },
+    red: PlR,
+    green: PlG,
+    blue: PlB,
+    yellow: PlY,
+    playCount: 0,
+    playing: "red",
+  },
+}
+
+
+export { initialTileMap, initTileQueue, bag, TileData, initialState, initBoard2d, PlG, PlB, PlY, PlR };
