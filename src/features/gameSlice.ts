@@ -200,27 +200,37 @@ export const gameSlice = createSlice({
       const player = state.players[state.players.playing];
       player.options = tile.positionMap[tile.currentPosition];
       player.location = tile.location;
-      const surroundingIdx = getSurroundingIdx(i, j);
-      const [ui, uj] = surroundingIdx.up;
-      const tileUp = state.board[ui][uj];
-      const [ri, rj] = surroundingIdx.right;
-      const tileRight = state.board[ri][rj];
-      const [di, dj] = surroundingIdx.down;
-      const tileDown = state.board[di][dj];
-      const [li, lj] = surroundingIdx.left;
-      const tileLeft = state.board[li][lj];
-      if (tileUp.name !== "empty") {
-        tileUp.illuminated.push(player.color);
-      }
-      if (tileDown.name !== "empty") {
-        tileDown.illuminated.push(player.color);
-      }
-      if (tileRight.name !== "empty") {
-        tileRight.illuminated.push(player.color);
-      }
-      if (tileLeft.name !== "empty") {
-        tileLeft.illuminated.push(player.color);
-      }
+      const surIdx = getSurroundingIdx(i, j);
+      Object.keys(surIdx).forEach(key => {
+        const [ki, kj] = surIdx[key];
+        state.board[ki][kj] = { ...state.board[ki][kj], illuminated: [...state.board[ki][kj].illuminated, player.color] };
+      });
+      
+      // const [ui, uj] = surroundingIdx.up;
+      // const tileUp = state.board[ui][uj];
+      // const [ri, rj] = surroundingIdx.right;
+      // const tileRight = state.board[ri][rj];
+      // const [di, dj] = surroundingIdx.down;
+      // const tileDown = state.board[di][dj];
+      // const [li, lj] = surroundingIdx.left;
+      // const tileLeft = state.board[li][lj];
+
+      // tileUp.illuminated = { ...tileUp, illuminated: [...tileUp.illuminated, player.color] };
+      // .push(player.color);
+      // tileDown.illuminated = {...tileDown, illuminated: [...tileUp.illuminated, player.color]}
+      // .push(player.color);
+      // tileRight.illuminated = {...tileRight, illuminated: [...tileUp.illuminated, player.color]}
+      // .push(player.color);
+      // tileLeft.illuminated = {...tileLeft, illuminated: }
+      // .push(player.color);
+      // if (tileUp.name !== "empty") {
+      // }
+      // if (tileDown.name !== "empty") {
+      // }
+      // if (tileRight.name !== "empty") {
+      // }
+      // if (tileLeft.name !== "empty") {
+      // }
     },
     rotateTile: (state, action: PayloadAction<[number, number]>) => {
       const [i, j] = action.payload;
@@ -254,8 +264,17 @@ export const gameSlice = createSlice({
         const initSurIdx = getSurroundingIdx(i, j);
         Object.keys(initSurIdx).forEach(key => {
           const [xi, xj] = initSurIdx[key];
-          state.board[xi][xj].illuminated.splice(
-            state.board[xi][xj].illuminated.findIndex(x => x === player.color), 1);
+          if (key !== dir) {
+            const filteredIlluminated = state.board[xi][xj].illuminated.filter(x => x !== player.color);
+            if (filteredIlluminated.length <= 0) {
+              state.discard.push(state.board[xi][xj]);
+              state.board[xi][xj] = new EmptyTileData(xi, xj);
+              state.board[xi][xj].illuminated = [];
+            } else {
+              state.board[xi][xj].illuminated.splice(
+                state.board[xi][xj].illuminated.findIndex(x => x === player.color), 1);
+            }
+          }
         });
         let [ni, nj] = initSurIdx[action.payload];
         player.location = [ni, nj];
@@ -268,7 +287,6 @@ export const gameSlice = createSlice({
         state.board[ni][nj].active = true;
         player.options = state.board[ni][nj].positionMap[state.board[ni][nj].currentPosition];
       }
-
     }
   }
 })
