@@ -20,7 +20,7 @@ import {
   WaxEater
 } from "./";
 import { Candle } from "../player";
-import { Colors } from "../types";
+import { Color } from "../types";
 
 type Props = {
   children?: React.ReactNode;
@@ -48,7 +48,7 @@ const Tile: React.FC<Props> = ({ children, loc, containing = "empty", tile }) =>
   const dispatch = useDispatch();
   // const [rotation, setRotation] = useState(0);
   const rotation = tile.currentPosition;
-  const [candle, setCandle] = useState<Colors | null>(null);
+  const [candle, setCandle] = useState<Color | null>(null);
   // const tiles = game;
   const players = game.players;
   const { red, green, blue, yellow } = players;

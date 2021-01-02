@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../app/store";
-import { GameState, Tile, Colors, Player, PlayerTile, Direction } from "./types";
-import { bag, initTileQueue, EmptyTileData, Pit } from "./tiles/seedData";
+import { GameState, Tile, Color, Player, Direction } from "./types";
+import { bag, initTileQueue, EmptyTileData, Pit } from "./seedData";
 
 const PlY: Player = {
   tile: {
@@ -57,7 +57,7 @@ const initialState: GameState = {
   bag: bag,
   board: initBoard2d,
   queue: initTileQueue,
-  void: [],
+  discard: [],
   selected: null,
   players: {
     turnOrder: {
@@ -92,7 +92,7 @@ export const gameSlice = createSlice({
     voidTile: (state, action: PayloadAction<[number, number]>) => {
       const [i, j] = action.payload;
       const tile = state.board[i][j];
-      state.void.push(tile);
+      state.discard.push(tile);
       state.board[i][j] = new EmptyTileData(i, j);
     },
     setTileFromQueue: (state, action: PayloadAction<[number, number]>) => {
@@ -103,7 +103,7 @@ export const gameSlice = createSlice({
           state.queue.splice(idx, 1);
           state.selected = null;
           const [i, j] = action.payload;
-          state.board[i][j] = { ...tile, location2d: action.payload };
+          state.board[i][j] = { ...tile, location: action.payload };
         }
       }
     },
@@ -115,7 +115,7 @@ export const gameSlice = createSlice({
         return;
       }
     },
-    selectPlayerTile: (state, action: PayloadAction<Colors>) => {
+    selectPlayerTile: (state, action: PayloadAction<Color>) => {
       if (state.selected) {
         state.selected = null;
       }
@@ -128,9 +128,10 @@ export const gameSlice = createSlice({
     setPlayer: (state, action: PayloadAction<[number, number]>) => {
       const [i, j] = action.payload;
       const tile = state.board[i][j];
+      tile.active = true;~
       const player = state.players[state.players.playing];
       player.options = tile.positionMap[tile.currentPosition];
-      player.location = tile.location2d;
+      player.location = tile.location;
     },
     rotateTile: (state, action: PayloadAction<[number, number]>) => {
       const [i, j] = action.payload;

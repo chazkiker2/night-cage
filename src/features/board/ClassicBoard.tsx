@@ -18,7 +18,7 @@ const ClassicBoard: React.FC<Props> = (props) => {
         {
           tiles.board?.map(x => {
             return x.map(y => {
-              return <Tile key={y.id} loc={y.location2d} tile={y} containing={y.name} />
+              return <Tile key={y.id} loc={y.location} tile={y} containing={y.name} />
             });
           })
         }
