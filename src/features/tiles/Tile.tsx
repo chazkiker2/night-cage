@@ -95,12 +95,13 @@ const Tile: React.FC<Props> = ({ children, loc, containing = "empty", tile }) =>
   }
 
   const handleSetTile = () => {
-    const [i, j] = game.players[game.players.playing].location;
-    if (i < 0 && j < 0) {
+    // const [i, j] = game.players[game.players.playing].location;
+    if (game.postFall) {
       dispatch(postFall(loc));
     } else {
       dispatch(setTileFromQueue(loc));
     }
+
   }
 
   const handleSetPlayer = (evt: React.MouseEvent) => {

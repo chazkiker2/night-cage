@@ -39,6 +39,7 @@ export interface PlayerTile {
 }
 
 export interface GameState {
+  postFall?: boolean;
   bag: Tile[];
   queue: Tile[];
   discard: Tile[];

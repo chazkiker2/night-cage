@@ -252,6 +252,7 @@ for (let i: number = 0; i < 6; i++) {
 }
 
 const initialState: GameState = {
+  postFall: false,
   bag: bag,
   board: initBoard2d,
   queue: initTileQueue,

@@ -29,6 +29,9 @@ export const gameSlice = createSlice({
   name: "tiles",
   initialState,
   reducers: {
+    listenPostFall: (state) => {
+      state.postFall = !state.postFall;
+    },
     drawTile: (state) => {
       const i = Math.floor(Math.random() * state.bag.length);
       const tileToMove = state.bag.splice(i, 1);
@@ -197,12 +200,33 @@ export const gameSlice = createSlice({
           player.options = state.board[ni][nj].positionMap[state.board[ni][nj].currentPosition];
         } else {
           // player has fallen into the labyrinth
-          // const [pi, pj] = player.location;
+          const secSurIdx = getSurroundingIdx(ni, nj);
+          Object.keys(secSurIdx).forEach(key => {
+            const [xi, xj] = initSurIdx[key];
+
+            const filtered = state.board[xi][xj].illuminated.filter(x => x !== player.color);
+            if (filtered.length <= 0) {
+              state.discard.push(state.board[xi][xj]);
+              state.board[xi][xj] = new EmptyTileData(xi, xj);
+              state.board[xi][xj].illuminated = [];
+            } else {
+              state.board[xi][xj].illuminated.splice(
+                state.board[xi][xj].illuminated.findIndex(x => x === player.color), 1);
+            }
+
+          })
+          const filteredIlluminated = state.board[i][j].illuminated.filter(x => x !== player.color);
+          if (filteredIlluminated.length <= 0) {
+            state.discard.push(state.board[i][j]);
+            state.board[i][j] = new EmptyTileData(i, j);
+            state.board[i][j].illuminated = [];
+          } else {
+            state.board[i][j].illuminated.splice(
+              state.board[i][j].illuminated.findIndex(x => x === player.color), 1);
+          }
           const pi = ni === 0 ? -6 : -ni;
           const pj = nj === 0 ? -6 : -nj;
           player.location = [pi, pj];
-          // player.location = [0, -1];
-          // state.board[]
         }
       }
     },
@@ -227,6 +251,15 @@ export const gameSlice = createSlice({
     },
     postFall: (state, action: PayloadAction<[number, number]>) => {
       const [i, j] = action.payload;
+      const [pi, pj] = state.players[state.players.playing].location;
+
+      let gi = Math.abs(pi) === 6 ? 0 : Math.abs(pi);
+      let gj = Math.abs(pj) === 6 ? 0 : Math.abs(pj);
+
+      if (i !== gi && j !== gj) {
+        return;
+      }
+
       const existingTile = state.board[i][j];
       if (existingTile.name !== "empty") { return; }
       const rand = Math.floor(Math.random() * state.bag.length);
@@ -244,6 +277,7 @@ export const gameSlice = createSlice({
       player.location = action.payload;
       player.options = newTile[0].positionMap[newTile[0].currentPosition];
 
+      state.postFall = false;
 
     }
   }
@@ -262,6 +296,8 @@ export const {
   voidTile,
   stayPlayer,
   postFall,
+  listenPostFall,
 } = gameSlice.actions;
+
 export const selectGame = (state: RootState) => state.game;
 export default gameSlice.reducer;

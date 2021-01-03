@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { selectGame, stayPlayer } from "../gameSlice";
+import { listenPostFall, postFall, selectGame, stayPlayer } from "../gameSlice";
 import styled from "styled-components";
 import { Color } from "../types";
 import { Candle } from "./";
@@ -13,19 +13,15 @@ type Props = {
 }
 
 const Instructions: React.FC<Props> = ({ shown }) => {
-  const dispatch = useDispatch();
+
   const game = useSelector(selectGame);
   const player = game.players[game.players.playing];
 
-  const handleStay = (evt: React.MouseEvent) => {
-    evt.stopPropagation();
-    dispatch(stayPlayer());
-  }
 
   if (player.isLit) {
     return (
       <StWrap shown={shown}>
-        <Anchor onClick={handleStay}>Stay</Anchor>
+
         <StInstructions>
           <div className="left">
             <Heading h4>Lights on</Heading>
@@ -64,8 +60,19 @@ const Instructions: React.FC<Props> = ({ shown }) => {
 }
 
 const PrisonerStatus: React.FC<Props> = ({ color, shown }) => {
+  const dispatch = useDispatch();
   const game = useSelector(selectGame);
   const player = game.players[game.players.playing];
+
+  const handleStay = (evt: React.MouseEvent) => {
+    evt.stopPropagation();
+    dispatch(stayPlayer());
+  }
+
+  const handlePostFall = (evt: React.MouseEvent) => {
+    evt.stopPropagation();
+    dispatch(listenPostFall())
+  }
 
   return (
     <StWrap shown={shown}>
@@ -83,6 +90,8 @@ const PrisonerStatus: React.FC<Props> = ({ color, shown }) => {
         }
       </Heading>
       <Heading h5>Location: [{player.location[0]}, {player.location[1]}]</Heading>
+      <Anchor onClick={handleStay}>Stay</Anchor>
+      <Anchor onClick={handlePostFall}>{game.postFall ? "Listening" : "Listen"}</Anchor>
       <Instructions shown={shown} />
 
     </StWrap>
