@@ -75,19 +75,51 @@ export const gameSlice = createSlice({
       state.players.playCount + 1 >= 4 ? state.players.playCount = 0 : state.players.playCount++;
       state.players.playing = state.players.turnOrder[state.players.playCount];
     },
+
+    /**
+     * Allows users to set their player on a tile. (used for starting positions only)
+     * @param state the state to update
+     * @param action PayloadAction<[number, number]> signifying the location to set the tile
+     */
     setPlayer: (state, action: PayloadAction<[number, number]>) => {
       const [i, j] = action.payload;
       const tile = state.board[i][j];
       tile.active = true;
       const player = state.players[state.players.playing];
+
+      // if player is already on board, remove the illumination surrounding them.
+      if (player.location[0] >= 0) {
+        const [oi, oj] = player.location;
+        const oIdx = getSurroundingIdx(oi, oj);
+        Object.keys(oIdx).forEach(key => {
+          const [xi, xj] = oIdx[key];
+          const filteredIlluminated = state.board[xi][xj].illuminated.filter(x => x !== player.color);
+          if (filteredIlluminated.length <= 0) {
+            state.discard.push(state.board[xi][xj]);
+            state.board[xi][xj].illuminated = [];
+          } else {
+            state.board[xi][xj].illuminated.splice(
+              state.board[xi][xj].illuminated.findIndex(x => x === player.color), 1);
+          }
+        });
+      }
+
       player.options = tile.positionMap[tile.currentPosition];
       player.location = tile.location;
+
+      // add illumination around new position
       const surIdx = getSurroundingIdx(i, j);
       Object.keys(surIdx).forEach(key => {
         const [ki, kj] = surIdx[key];
         state.board[ki][kj] = { ...state.board[ki][kj], illuminated: [...state.board[ki][kj].illuminated, player.color] };
       });
     },
+
+    /**
+     * allows users to rotate a tile at the given location
+     * @param state the state to change
+     * @param action PayloadAction<[number, number]>
+     */
     rotateTile: (state, action: PayloadAction<[number, number]>) => {
       const [i, j] = action.payload;
       if (i < 0 || j < 0) {
@@ -105,9 +137,14 @@ export const gameSlice = createSlice({
         if (iR === i && jR === j) { state.players.red.options = tile.positionMap[tile.currentPosition] }
         if (iY === i && jY === j) { state.players.yellow.options = tile.positionMap[tile.currentPosition] }
         if (iG === i && jG === j) { state.players.green.options = tile.positionMap[tile.currentPosition] }
-
       }
     },
+
+    /**
+     * Allows users to move their Prisoner Token in an available direction
+     * @param state the state to manipulate
+     * @param action the direction to move (PayloadAction<Direction>). 
+     */
     movePlayer: (state, action: PayloadAction<Direction>) => {
       const dir = action.payload;
       const player = state.players[state.players.playing];
@@ -143,6 +180,25 @@ export const gameSlice = createSlice({
         state.board[ni][nj].active = true;
         player.options = state.board[ni][nj].positionMap[state.board[ni][nj].currentPosition];
       }
+    },
+    stayPlayer: (state) => {
+      const player = state.players[state.players.playing];
+      if (player.options.includes("stay")) {
+        const [i, j] = player.location;
+        const tile = state.board[i][j];
+        if (tile.active && tile.turnsToPit) {
+          const pit = new Pit([i, j]);
+          pit.active = true;
+          pit.player = player.color;
+          state.board[i][j] = pit;
+        }
+        if (player.nerveCount < 2) {
+          player.nerveCount++;
+        }
+        const rand = Math.floor(Math.random() * state.bag.length);
+        const tileToMove = state.bag.splice(rand, 1);
+        state.queue.push(tileToMove[0]);
+      }
     }
   }
 })
@@ -158,6 +214,7 @@ export const {
   rotateTile,
   movePlayer,
   voidTile,
+  stayPlayer,
 } = gameSlice.actions;
 export const selectGame = (state: RootState) => state.game;
 export default gameSlice.reducer;
