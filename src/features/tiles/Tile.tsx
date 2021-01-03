@@ -7,7 +7,8 @@ import {
   setPlayer,
   setTileFromQueue,
   rotateTile,
-  voidTile
+  voidTile,
+  postFall,
 } from "../gameSlice";
 import {
   Gate,
@@ -89,11 +90,17 @@ const Tile: React.FC<Props> = ({ children, loc, containing = "empty", tile }) =>
 
   const select: React.MouseEventHandler = (evt: React.MouseEvent) => {
     evt.stopPropagation();
+
     dispatch(selectTile(tile))
   }
 
   const handleSetTile = () => {
-    dispatch(setTileFromQueue(loc));
+    const [i, j] = game.players[game.players.playing].location;
+    if (i < 0 && j < 0) {
+      dispatch(postFall(loc));
+    } else {
+      dispatch(setTileFromQueue(loc));
+    }
   }
 
   const handleSetPlayer = (evt: React.MouseEvent) => {

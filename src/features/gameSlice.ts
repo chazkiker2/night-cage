@@ -37,7 +37,10 @@ export const gameSlice = createSlice({
     setTile: (state, action: PayloadAction<{ location: [number, number], tile: Tile }>) => {
       const { location, tile } = action.payload;
       const [i, j] = location;
-      state.board[i][j] = tile;
+      const existingTile = state.board[i][j];
+
+      state.board[i][j] = { ...tile, illuminated: existingTile.illuminated };
+
     },
     voidTile: (state, action: PayloadAction<[number, number]>) => {
       const [i, j] = action.payload;
@@ -53,7 +56,11 @@ export const gameSlice = createSlice({
           state.queue.splice(idx, 1);
           state.selected = null;
           const [i, j] = action.payload;
-          state.board[i][j] = { ...tile, location: action.payload };
+          state.board[i][j] = {
+            ...tile,
+            location: action.payload,
+            illuminated: state.board[i][j].illuminated
+          };
         }
       }
     },
@@ -62,7 +69,6 @@ export const gameSlice = createSlice({
         state.selected = null;
       } else {
         state.selected = action.payload;
-        return;
       }
     },
     selectPlayerTile: (state, action: PayloadAction<Color>) => {
@@ -86,6 +92,10 @@ export const gameSlice = createSlice({
       const tile = state.board[i][j];
       tile.active = true;
       const player = state.players[state.players.playing];
+
+      if (!tile.illuminated.includes(player.color)) {
+        tile.illuminated = [...tile.illuminated, player.color];
+      }
 
       // if player is already on board, remove the illumination surrounding them.
       if (player.location[0] >= 0) {
@@ -170,15 +180,30 @@ export const gameSlice = createSlice({
           }
         });
         let [ni, nj] = initSurIdx[action.payload];
-        player.location = [ni, nj];
-        const secSurIdx = getSurroundingIdx(ni, nj);
-        Object.keys(secSurIdx).forEach(key => {
-          const [xi, xj] = secSurIdx[key];
-          state.board[xi][xj] = { ...state.board[xi][xj], illuminated: [...state.board[xi][xj].illuminated, player.color] }
-        });
-        state.board[ni][nj].player = player.color;
-        state.board[ni][nj].active = true;
-        player.options = state.board[ni][nj].positionMap[state.board[ni][nj].currentPosition];
+        const existingTile = state.board[ni][nj];
+        if (existingTile.name !== "pit") {
+          // player has landed on another tile
+          player.location = [ni, nj];
+          const secSurIdx = getSurroundingIdx(ni, nj);
+          Object.keys(secSurIdx).forEach(key => {
+            const [xi, xj] = secSurIdx[key];
+            state.board[xi][xj] = {
+              ...state.board[xi][xj],
+              illuminated: [...state.board[xi][xj].illuminated, player.color]
+            }
+          });
+          state.board[ni][nj].player = player.color;
+          state.board[ni][nj].active = true;
+          player.options = state.board[ni][nj].positionMap[state.board[ni][nj].currentPosition];
+        } else {
+          // player has fallen into the labyrinth
+          // const [pi, pj] = player.location;
+          const pi = ni === 0 ? -6 : -ni;
+          const pj = nj === 0 ? -6 : -nj;
+          player.location = [pi, pj];
+          // player.location = [0, -1];
+          // state.board[]
+        }
       }
     },
     stayPlayer: (state) => {
@@ -199,6 +224,27 @@ export const gameSlice = createSlice({
         const tileToMove = state.bag.splice(rand, 1);
         state.queue.push(tileToMove[0]);
       }
+    },
+    postFall: (state, action: PayloadAction<[number, number]>) => {
+      const [i, j] = action.payload;
+      const existingTile = state.board[i][j];
+      if (existingTile.name !== "empty") { return; }
+      const rand = Math.floor(Math.random() * state.bag.length);
+      // const tileToMove = state.bag.splice(rand, 1);
+      const newTile = state.bag.splice(rand, 1);
+      const player = state.players[state.players.playing];
+
+      state.board[i][j] = {
+        ...newTile[0],
+        illuminated: [...existingTile.illuminated, player.color],
+        location: [i, j],
+        player: player.color
+      };
+
+      player.location = action.payload;
+      player.options = newTile[0].positionMap[newTile[0].currentPosition];
+
+
     }
   }
 })
@@ -215,6 +261,7 @@ export const {
   movePlayer,
   voidTile,
   stayPlayer,
+  postFall,
 } = gameSlice.actions;
 export const selectGame = (state: RootState) => state.game;
 export default gameSlice.reducer;
