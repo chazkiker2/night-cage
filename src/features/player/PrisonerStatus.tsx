@@ -1,10 +1,10 @@
 import React from "react";
-import { useSelector } from "react-redux";
-import { selectGame } from "../gameSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { selectGame, stayPlayer } from "../gameSlice";
 import styled from "styled-components";
 import { Color } from "../types";
 import { Candle } from "./";
-import { Heading } from "../../shared/layout";
+import { Heading, Anchor } from "../../shared/layout";
 
 type Props = {
   children?: React.ReactNode;
@@ -13,11 +13,19 @@ type Props = {
 }
 
 const Instructions: React.FC<Props> = ({ shown }) => {
+  const dispatch = useDispatch();
   const game = useSelector(selectGame);
   const player = game.players[game.players.playing];
+
+  const handleStay = (evt: React.MouseEvent) => {
+    evt.stopPropagation();
+    dispatch(stayPlayer());
+  }
+
   if (player.isLit) {
     return (
       <StWrap shown={shown}>
+        <Anchor onClick={handleStay}>Stay</Anchor>
         <StInstructions>
           <div className="left">
             <Heading h4>Lights on</Heading>
